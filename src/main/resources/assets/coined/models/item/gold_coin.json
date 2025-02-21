@@ -1,0 +1,26 @@
+{
+    "parent": "item/generated",
+    "textures": {
+      "layer0": "coined:item/gold_coin_0"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "coined:coins": 0.25
+            },
+            "model": "coined:item/gold_coin_1"
+        },
+        {
+            "predicate": {
+                "coined:coins": 0.5
+            },
+            "model": "coined:item/gold_coin_2"
+        },
+        {
+            "predicate": {
+                "coined:coins": 0.75
+            },
+            "model": "coined:item/gold_coin_3"
+        }
+    ]
+}

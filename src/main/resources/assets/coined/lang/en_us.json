@@ -1,5 +1,56 @@
 {
-  "itemGroup.coined": "Example Mod Tab",
-  "block.coined.example_block": "Example Block",
-  "item.coined.example_item": "Example Item"
+    "itemGroup.coined": "Coined",
+
+    "item.coined.copper_coin": "Copper Coin",
+    "item.coined.copper_coin.multiple": "Copper Coins",
+
+    "item.coined.silver_coin": "Silver Coin",
+    "item.coined.silver_coin.multiple": "Silver Coins",
+
+    "item.coined.gold_coin": "Gold Coin",
+    "item.coined.gold_coin.multiple": "Gold Coins",
+
+    "item.coined.platinum_coin": "Platinum Coin",
+    "item.coined.platinum_coin.multiple": "Platinum Coins",
+
+    "item.coined.money_bag": "Money Bag",
+    "item.coined.money_bag.empty": "Empty Money Bag",
+
+    "coined.txt.copper": "Copper",
+    "coined.txt.silver": "Silver",
+    "coined.txt.gold": "Gold",
+    "coined.txt.platinum": "Platinum",
+
+    "coined.txt.empty": "Empty",
+
+    "coined.label.value": "Value: %s",
+    "coined.label.total": "Total: %s",
+
+    "coined.button.purse.open": "Open Purse",
+    "coined.button.purse.close": "Close Purse",
+    "coined.button.purse.reset": "Reset Purse Position",
+
+    "coined.txt.shift_info": "hold [Shift] for more info",
+    "coined.txt.absorb_coin": "[Right-click] to \"absorb\" the Coin",
+    "coined.txt.absorb_coin.multiple": "[Right-click] to \"absorb\" the Coins",
+    "coined.txt.absorb_bag": "[Right-click] to \"absorb\" the Money Bag",
+    "coined.txt.autostack_bag": "[Right-click] to Auto-stack the Money Bag",
+
+    
+    "block.coined.shop_block_white": "Shop Block",
+    "block.coined.shop_block_light_gray": "Light Gray Shop Block",
+    "block.coined.shop_block_gray": "Gray Shop Block",
+    "block.coined.shop_block_black": "Black Shop Block",
+    "block.coined.shop_block_brown": "Brown Shop Block",
+    "block.coined.shop_block_red": "Red Shop Block",
+    "block.coined.shop_block_orange": "Orange Shop Block",
+    "block.coined.shop_block_yellow": "Yellow Shop Block",
+    "block.coined.shop_block_lime": "Lime Shop Block",
+    "block.coined.shop_block_green": "Green Shop Block",
+    "block.coined.shop_block_cyan": "Cyan Shop Block",
+    "block.coined.shop_block_light_blue": "Light Blue Shop Block",
+    "block.coined.shop_block_blue": "Blue Shop Block",
+    "block.coined.shop_block_purple": "Purple Shop Block",
+    "block.coined.shop_block_magenta": "Magenta Shop Block",
+    "block.coined.shop_block_pink": "Pink Shop Block"
 }

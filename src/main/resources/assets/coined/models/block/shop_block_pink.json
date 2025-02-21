@@ -1,0 +1,7 @@
+{
+    "parent": "coined:block/shop_block",
+    "textures": {
+        "0": "coined:block/shop/pink",
+        "particle": "coined:block/shop/pink"
+    }
+}

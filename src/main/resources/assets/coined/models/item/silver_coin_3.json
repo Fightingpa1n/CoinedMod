@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "coined:item/silver_coin_3"
+    }
+}
