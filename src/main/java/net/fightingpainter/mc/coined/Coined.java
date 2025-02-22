@@ -8,8 +8,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -22,10 +24,13 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
 import net.fightingpainter.mc.coined.blocks.ModBlocks;
 import net.fightingpainter.mc.coined.blocks.shop.ShopBlockEntityRenderer;
+import net.fightingpainter.mc.coined.currency.BalanceManager;
 import net.fightingpainter.mc.coined.gui.InventoryAdderThingy;
 import net.fightingpainter.mc.coined.gui.menus.ModMenus;
 import net.fightingpainter.mc.coined.gui.screens.ShopScreen;
@@ -77,7 +82,7 @@ public class Coined { //Main Mod Class
         modEventBus.addListener(this::addCreative);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
 
@@ -125,51 +130,4 @@ public class Coined { //Main Mod Class
     // }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) { //server starting
-        // Do something when the server starts
-        LOGGER.info("Heey! that's cool! I'm inside onServerStarting! it's more spacious here so you can come and join me! :D");
-    }
-
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid=MOD_ID, bus =EventBusSubscriber.Bus.MOD, value=Dist.CLIENT)
-    public static class ClientModEvents {
-        
-
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) { //client setup
-
-            BlockEntityRenderers.register(ModBlocks.SHOP_BLOCK_ENTITY.get(), ShopBlockEntityRenderer::new);
-
-            event.enqueueWork(() -> {
-
-                //register the InventoryGuiButton
-                InventoryAdderThingy inventoryGuiButton = new InventoryAdderThingy();
-                NeoForge.EVENT_BUS.register(inventoryGuiButton);
-
-                
-                // Item properties
-                float maxStack = 64.0f;
-
-                //coins property for coins so they change texture on ammount
-                ItemProperties.register(ModItems.COPPER_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Copper Coin
-                ItemProperties.register(ModItems.SILVER_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Silver Coin
-                ItemProperties.register(ModItems.GOLD_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Gold Coin
-                ItemProperties.register(ModItems.PLATINUM_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Platinum Coin
-
-                LOGGER.info("Item properties registered successfully.");
-            });
-
-            LOGGER.info("WHAAAT!? I'm inside ClientSetup! I'm not sure what you two are talking about! :|");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-        }
-
-
-        @SubscribeEvent
-        public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
-            event.register(ModMenus.SHOP_MENU.get(), ShopScreen::new);
-        }
-
-
-    }
 }

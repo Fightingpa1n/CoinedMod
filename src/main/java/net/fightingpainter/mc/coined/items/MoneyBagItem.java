@@ -2,7 +2,7 @@ package net.fightingpainter.mc.coined.items;
 
 import java.util.List;
 
-import net.fightingpainter.mc.coined.currency.Money;
+import net.fightingpainter.mc.coined.util.Money;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;

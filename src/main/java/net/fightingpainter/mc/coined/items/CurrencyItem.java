@@ -3,6 +3,7 @@ package net.fightingpainter.mc.coined.items;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.fightingpainter.mc.coined.currency.BalanceManager;
 import net.fightingpainter.mc.coined.util.Txt;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -19,9 +20,9 @@ public class CurrencyItem extends Item {
         if (!world.isClientSide) { // Ensure server-side execution
             ItemStack stack = player.getItemInHand(hand);
             long value = getValue(stack);
-
+            
             //log value in chat (send a message to the player)
-            player.sendSystemMessage(Txt.text("Value: "+value));
+            player.sendSystemMessage(Txt.text("Balance: "+BalanceManager.getBalance(player).toString()));
 
             // Add to player balance (implement your custom logic for balance handling)
             // For example, Currency.addPlayerBalance(player, value);

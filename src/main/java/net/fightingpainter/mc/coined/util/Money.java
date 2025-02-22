@@ -1,5 +1,7 @@
-package net.fightingpainter.mc.coined.currency;
+package net.fightingpainter.mc.coined.util;
 
+import net.fightingpainter.mc.coined.currency.CoinType;
+import net.fightingpainter.mc.coined.util.types.Dict;
 import net.minecraft.nbt.CompoundTag;
 
 /**
@@ -377,6 +379,35 @@ public class Money {
         return nbt;
     }
 
+
+    /**
+     * Converts the Money Object's Coin amounts to a Dictionary
+     * @return the Dict that represents the Money Object
+    */
+    public Dict toDict() {
+        Dict dict = new Dict();
+        dict.set("copper", copper_coin_amount);
+        dict.set("silver", silver_coin_amount);
+        dict.set("gold", gold_coin_amount);
+        dict.set("platinum", platinum_coin_amount);
+        return dict;
+    }
+
+    /**
+     * Creates a Money Object from a Dictionary
+     * @param dict the Dict that should be used to create the Money Object
+     * @return the created Money Object
+    */
+    public static Money fromDict(Dict dict) {
+        return new Money(
+            (int) dict.get("copper", 0),
+            (int) dict.get("silver", 0),
+            (int) dict.get("gold", 0),
+            (int) dict.get("platinum", 0)
+        );
+    }
+
+    
     public Money copy() {return new Money(copper_coin_amount, silver_coin_amount, gold_coin_amount, platinum_coin_amount);}
 
 
