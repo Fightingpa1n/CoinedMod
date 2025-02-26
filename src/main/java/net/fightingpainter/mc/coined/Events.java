@@ -48,10 +48,4 @@ public class Events {
         MoneyCommand.register(event.getDispatcher());
     }
     
-
-    @SubscribeEvent
-    public static void onInventoryClick(PlayerContainerEvent.Open) {
-
-    }
-
 }

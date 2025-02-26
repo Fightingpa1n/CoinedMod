@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "package": "net.fightingpainter.mc.coined.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "InventoryMixin"
+    ],
+    "client": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

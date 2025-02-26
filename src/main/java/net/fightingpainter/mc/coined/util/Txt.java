@@ -18,7 +18,7 @@ public class Txt {
     public static final int HINT = 0x5555ff;
 
     public static final int GREEN = 0x55ff55;
-    
+
     public static final int TOTAL = 0xbdc9bf;
     public static final int COPPER = CoinType.COPPER.getNameColor();
     public static final int SILVER = CoinType.SILVER.getNameColor();

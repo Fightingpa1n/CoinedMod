@@ -42,6 +42,13 @@ public class CoinItem extends CurrencyItem {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+        if (stack.getCount() > 1) {
+
+            // tooltipComponents.add(Txt.colored(Txt.concat(Txt.trans("")), Txt.TOTAL));
+
+        }
+
+
 
     }
 

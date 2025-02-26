@@ -7,6 +7,7 @@ import net.fightingpainter.mc.coined.gui.menus.ModMenus;
 import net.fightingpainter.mc.coined.gui.screens.ShopScreen;
 import net.fightingpainter.mc.coined.items.ModItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -21,9 +22,8 @@ import net.neoforged.neoforge.common.NeoForge;
 @EventBusSubscriber(modid=Coined.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value=Dist.CLIENT)
 public class Client {
     
-
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) { //client setup
+    @SubscribeEvent //Main Client Setup
+    public static void onClientSetup(FMLClientSetupEvent event) {
 
         BlockEntityRenderers.register(ModBlocks.SHOP_BLOCK_ENTITY.get(), ShopBlockEntityRenderer::new);
 
@@ -50,9 +50,20 @@ public class Client {
         Coined.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
     }
 
+    //============================== Events ==============================\\
 
     @SubscribeEvent
     public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.SHOP_MENU.get(), ShopScreen::new);
     }
+
+    //============================== private stuff ==============================\\
+
+    private void RegisterFonts() { //register fonts
+
+
+
+
+    }
+
 }
