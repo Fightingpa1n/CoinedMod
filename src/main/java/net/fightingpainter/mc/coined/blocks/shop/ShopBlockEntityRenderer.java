@@ -1,8 +1,9 @@
 package net.fightingpainter.mc.coined.blocks.shop;
 
+import javax.annotation.Nonnull;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -20,7 +21,7 @@ public class ShopBlockEntityRenderer implements BlockEntityRenderer<ShopBlockEnt
     }
 
     @Override
-    public void render(ShopBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(@Nonnull ShopBlockEntity blockEntity, float partialTicks, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         ItemStack stack = blockEntity.getStoredItem();
         if (stack.isEmpty()) return; //No item to render
 

@@ -6,18 +6,12 @@ import java.nio.file.Path;
 
 import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.util.types.Dict;
-import net.fightingpainter.mc.coined.util.types.Pair;
 
 public class PlayerBalance {
     private final Path filePath;
     private final String playerId;
 
-    private Dict balance = new Dict(
-        new Pair("copper", 0),
-        new Pair("silver", 0),
-        new Pair("gold", 0),
-        new Pair("platinum", 0)
-    );
+    private Money balance = new Money(0l); //the balance of the player
 
     public PlayerBalance(String playerId, Path filePath) {
         this.filePath = filePath;
@@ -29,14 +23,16 @@ public class PlayerBalance {
             if (Files.exists(filePath)) {//check if the file exists
                 String json_string = new String(Files.readAllBytes(filePath));
                 Dict allBalances = Dict.fromJson(json_string);
-                balance = (Dict) allBalances.get(playerId, balance); //get the balance of the player or use the default balance
+                Dict balanceBalance = (Dict) allBalances.get(playerId, balance.toDict()); //get the balance of the player or use the default balance
+                balance = Money.fromDict(balanceBalance); //set the balance of the player
             } else { //if file doesn't exist, create it
                 save();
             }
 
         } catch (IOException e) {
             Coined.LOGGER.error("There was an error when trying to load player the player balance data for player: " + playerId);
-            e.printStackTrace();
+            Coined.LOGGER.error(e.getMessage());
+            Coined.LOGGER.error(e.getStackTrace().toString());
         }
     }
 
@@ -47,12 +43,12 @@ public class PlayerBalance {
                 String json_string = new String(Files.readAllBytes(filePath));
                 allBalances = Dict.fromJson(json_string); //get all the balances
             }
-            allBalances.set(playerId, balance); //set the balance of the player in the all balances
-            Coined.LOGGER.info(allBalances.toJson());
-            // Files.write(filePath, allBalances.toJson(4).getBytes()); //write the all balances to the file
+            allBalances.set(playerId, balance.toDict()); //set the balance of the player in the all balances
+            Files.write(filePath, allBalances.toJson(4).getBytes()); //write the all balances to the file
         } catch (IOException e) {
             Coined.LOGGER.error("There was an error when trying to save the player balance data for player: " + playerId);
-            e.printStackTrace();
+            Coined.LOGGER.error(e.getMessage());
+            Coined.LOGGER.error(e.getStackTrace().toString());
         }
     }
     
@@ -63,7 +59,7 @@ public class PlayerBalance {
     */
     public Money getBalance() {
         load(); //load the data
-        return Money.fromDict(balance); //return the balance of the player
+        return balance; //return the balance of the player
     }
 
     /**
@@ -72,9 +68,27 @@ public class PlayerBalance {
     */
     public void setBalance(Money newBalance) {
         load(); //load the data
-        this.balance = newBalance.toDict(); //set the balance of the player
+        this.balance = newBalance; //set the balance of the player
         save(); //save the data
     }
 
+    /**
+     * Adds an amount to the balance of a player
+     * @param amount The amount to add
+    */
+    public void addBalance(Money amount) {
+        load(); //load the data
+        this.balance = this.balance.add(amount); //add the amount to the balance of the player
+        save(); //save the data
+    }
 
+    /**
+     * Subtracts an amount from the balance of a player
+     * @param amount The amount to subtract
+    */
+    public void subtractBalance(Money amount) {
+        load(); //load the data
+        this.balance = this.balance.subtract(amount); //subtract the amount from the balance of the player
+        save(); //save the data
+    }
 }

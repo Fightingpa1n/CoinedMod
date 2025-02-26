@@ -31,18 +31,4 @@ public class Pair {
      * @return the Value as a String
     */
     public String toString() {return key + ": " + value;}
-
-
-    /**
-     * Wrapper Class called just P instead of Pair to make it easier to use
-    */
-    public class P extends Pair {
-
-        /**
-         * Creates a New Key-Value Pair
-         * @param key the Key
-         * @param value the Value
-        */
-        public P(String key, Object value) {super(key, value);}
-    }
 }

@@ -1,42 +1,53 @@
 package net.fightingpainter.mc.coined.items;
 
 import java.util.List;
+import javax.annotation.Nonnull;
 
-import net.fightingpainter.mc.coined.util.Money;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.api.distmarker.Dist;
+import net.fightingpainter.mc.coined.nbt.ModDataComponentTypes;
+import net.fightingpainter.mc.coined.util.Money;
+import net.fightingpainter.mc.coined.util.Txt;
 
 public class MoneyBagItem extends CurrencyItem {
 
     public MoneyBagItem() {
         super(new Properties().stacksTo(1));
     }
-
+    
     @Override
-    public long getValue(ItemStack stack) {
-        return 0;
-    }
+    public Money getValue(ItemStack stack) {
 
-    public Money getMoney(ItemStack stack) {
-        //get NBT data from stack
-        return new Money(0); //Todo: figure out how to do NBT
+        Money data = stack.get(ModDataComponentTypes.MONEY.get());
+        if (data != null) {return data;} //return money if 
 
-
+        stack.set(ModDataComponentTypes.MONEY.get(), new Money());
+        return new Money();
     }
 
     @Override
-    public Component getName(ItemStack stack) {
+    public Component getName(@Nonnull ItemStack stack) {
         return super.getName(stack);
-        
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
     }
     
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+        Money money = getValue(stack);
+        tooltipComponents.add(Txt.text(money.toString(true)));
+    }
+
+    /**
+     * Create a money bag itemstack 
+     * @param money the money to create the money bag from
+     * @return the money bag itemstack
+    */
+    public static ItemStack createMoneyBag(Money money) {
+        ItemStack stack = new ItemStack(ModItems.MONEY_BAG.get());
+        stack.set(ModDataComponentTypes.MONEY.get(), money);
+        return stack;
+    }
 }

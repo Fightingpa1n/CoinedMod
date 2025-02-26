@@ -1,16 +1,18 @@
 package net.fightingpainter.mc.coined.items;
 
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
-import net.fightingpainter.mc.coined.currency.CoinType;
-import net.fightingpainter.mc.coined.util.Txt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import net.fightingpainter.mc.coined.currency.CoinType;
+import net.fightingpainter.mc.coined.util.Money;
+import net.fightingpainter.mc.coined.util.Txt;
+
 
 /**
  * The Coin Item is a Currency Item that represents coins
@@ -25,8 +27,8 @@ public class CoinItem extends CurrencyItem {
     }
 
     @Override
-    public long getValue(ItemStack stack) { //override the getValue method to return the value of the stack
-        return coinType.getValue(stack.getCount());
+    public Money getValue(ItemStack stack) { //override the getValue method to return the value of the stack
+        return new Money(coinType.getValue(stack.getCount()));
     }
 
     
@@ -39,14 +41,13 @@ public class CoinItem extends CurrencyItem {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,TooltipFlag tooltipFlag) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
 
     }
 
     
     // public void appendTooltip(ItemStack stack,  world, List<Component> tooltip, TooltipContext context) {
-
-
+    
     //     if (Screen.hasShiftDown()) {
     //         tooltip.add(Txt.colored(Txt.concat("Value: ", coinType.getValue()), coinType.getNameColor()));
     //         if (stack.getCount() > 1) { tooltip.add(Txt.colored(Txt.concat("Total: ", Txt.total(coinType.getValue(stack.getCount()))), Txt.TOOLTIP2));}

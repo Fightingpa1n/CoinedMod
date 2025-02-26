@@ -1,40 +1,19 @@
 package net.fightingpainter.mc.coined;
 
 import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
+import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import net.fightingpainter.mc.coined.blocks.ModBlocks;
-import net.fightingpainter.mc.coined.blocks.shop.ShopBlockEntityRenderer;
-import net.fightingpainter.mc.coined.currency.BalanceManager;
-import net.fightingpainter.mc.coined.gui.InventoryAdderThingy;
 import net.fightingpainter.mc.coined.gui.menus.ModMenus;
-import net.fightingpainter.mc.coined.gui.screens.ShopScreen;
+import net.fightingpainter.mc.coined.items.CreativeMenuAdderThingy;
 import net.fightingpainter.mc.coined.items.ModItems;
+import net.fightingpainter.mc.coined.nbt.ModDataComponentTypes;
 
 
 @Mod(Coined.MOD_ID)
@@ -72,62 +51,17 @@ public class Coined { //Main Mod Class
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModMenus.register(modEventBus);
-        
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (Coined) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        //NeoForge.EVENT_BUS.register(this);
+        ModDataComponentTypes.register(modEventBus);
 
-        // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
+        modEventBus.addListener(CreativeMenuAdderThingy::addCreative); //add items to creative menu
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
-        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) { //building blocks
-            event.accept(ModItems.COPPER_COIN.get());
-            event.accept(ModItems.SILVER_COIN.get());
-            event.accept(ModItems.GOLD_COIN.get());
-            event.accept(ModItems.PLATINUM_COIN.get());
-        }
-
-
-        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) { //shop blocks
-            event.accept(ModItems.SHOP_BLOCK_WHITE_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_LIGHT_GRAY_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_GRAY_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_BLACK_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_BROWN_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_RED_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_ORANGE_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_YELLOW_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_LIME_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_GREEN_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_CYAN_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_LIGHT_BLUE_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_BLUE_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_PURPLE_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_MAGENTA_ITEM);
-            event.accept(ModItems.SHOP_BLOCK_PINK_ITEM);
-        }
-    }
-
-
     private void commonSetup(final FMLCommonSetupEvent event) { //common setup
         // Some common setup code
         LOGGER.info("Heylo! I'm insde CommonSetup! kinda cramped in here, but I'm just Happy to be here! :D");
-
-        // Register Stuff
     }
-
-    // Add the example block item to the building blocks tab
-    // private void addCreative(BuildCreativeModeTabContentsEvent event) {
-    //    if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) event.accept(EXAMPLE_BLOCK_ITEM);
-    // }
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
 }

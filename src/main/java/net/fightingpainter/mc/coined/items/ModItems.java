@@ -24,7 +24,7 @@ public class ModItems {
     public static final DeferredItem<Item> GOLD_COIN = ITEM_REGISTER.register("gold_coin", () -> new CoinItem(CoinType.GOLD));
     public static final DeferredItem<Item> PLATINUM_COIN = ITEM_REGISTER.register("platinum_coin", () -> new CoinItem(CoinType.PLATINUM));
 
-    public static final DeferredItem<Item> MONEY_BAG = ITEM_REGISTER.register("money_bag", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> MONEY_BAG = ITEM_REGISTER.register("money_bag", () -> new MoneyBagItem());
 
 
 
@@ -53,9 +53,6 @@ public class ModItems {
         return ITEM_REGISTER.registerSimpleBlockItem(block.getId().getPath(), block);
     }
     
-    
-    
-    
     /**
      * Register Items
      * @param modEventBus The mod event bus to register the items to
@@ -63,5 +60,6 @@ public class ModItems {
     public static void register(IEventBus modEventBus) {
         Coined.LOGGER.info("Registering items...");
         ITEM_REGISTER.register(modEventBus);
+
     }
 }

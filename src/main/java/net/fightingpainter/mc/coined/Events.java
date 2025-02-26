@@ -1,10 +1,21 @@
 package net.fightingpainter.mc.coined;
 
+import net.fightingpainter.mc.coined.commands.MoneyCommand;
 import net.fightingpainter.mc.coined.currency.BalanceManager;
+import net.fightingpainter.mc.coined.items.CoinItem;
+import net.fightingpainter.mc.coined.items.MoneyBagItem;
+import net.fightingpainter.mc.coined.util.Money;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ContainerScreenEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
@@ -31,5 +42,16 @@ public class Events {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onRegisterCommands(RegisterCommandsEvent event) {
+        MoneyCommand.register(event.getDispatcher());
+    }
     
+
+    @SubscribeEvent
+    public static void onInventoryClick(PlayerContainerEvent.Open) {
+
+    }
+
 }

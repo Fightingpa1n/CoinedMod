@@ -1,6 +1,7 @@
 package net.fightingpainter.mc.coined.gui;
 
 import java.time.Duration;
+import javax.annotation.Nonnull;
 
 import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.util.Txt;
@@ -10,7 +11,6 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.api.distmarker.Dist;
 
@@ -36,7 +36,7 @@ public class PurseButton extends Button {
     public boolean isFocused() {return false;} //disable focus for the button
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) { //render the button
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) { //render the button
         int u = useOpenSprites ? OPEN_OFFSET : 0; //set the offset based on if the button should use the open sprites
         int v = isHoveredOrFocused() ? HOVER_OFFSET : 0; //set the offset based on if the button is hovered or focused
         guiGraphics.blit(TEXTURE, getX(), getY(), u, v, width, height, TEXTURE_WIDTH, TEXTURE_HEIGHT); //render the button
@@ -57,6 +57,5 @@ public class PurseButton extends Button {
     public void toggleOpenSprites(boolean useOpenSprites) {this.useOpenSprites = useOpenSprites;} //toggle the button sprites
     /** @return if the button uses the open sprites */
     public boolean usesOpenSprites() {return useOpenSprites;} //return if the button uses the open sprites
-    
     
 }

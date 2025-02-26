@@ -1,8 +1,5 @@
 package net.fightingpainter.mc.coined.util;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
 import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.currency.CoinType;
 import net.minecraft.network.chat.Component;
@@ -19,6 +16,8 @@ public class Txt {
     public static final int TOOLTIP = 0xaaaaaa;
     public static final int TOOLTIP2 = 0x555555;
     public static final int HINT = 0x5555ff;
+
+    public static final int GREEN = 0x55ff55;
     
     public static final int TOTAL = 0xbdc9bf;
     public static final int COPPER = CoinType.COPPER.getNameColor();

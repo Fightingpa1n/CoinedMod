@@ -1,5 +1,9 @@
 package net.fightingpainter.mc.coined.util.types;
 
+import java.util.HashMap;
+
+import net.fightingpainter.mc.coined.Coined;
+
 abstract public class Listable {
 
     protected static final Class<?>[] validTypes = new Class<?>[] {
@@ -26,6 +30,14 @@ abstract public class Listable {
     }
 
     //============================== ToJson ==============================\\
+    protected static String jsonify(Object data) {
+        return jsonify(data, null, 0);
+    }
+
+    protected static String jsonify(Object data, Integer indent) {
+        return jsonify(data, indent, 0);
+    }
+
     protected static String jsonify(Object data, Integer indent, Integer _level) {
         if (data == null) return jsonifyNull(); //if the data is None
         if (data instanceof Boolean) return jsonifyBool((Boolean)data); //if the data is a boolean
@@ -33,6 +45,12 @@ abstract public class Listable {
         if (data instanceof String) return jsonifyString((String)data); //if the data is a string
         if (data instanceof List) return jsonifyList((List)data, indent, _level); //if the data is a list
         if (data instanceof Dict) return jsonifyDict((Dict)data, indent, _level); //if the data is a dict
+        
+        if (data instanceof HashMap) {
+            Coined.LOGGER.info("HashMap");
+            Coined.LOGGER.info(data.toString());
+        }
+
         throw new IllegalArgumentException("Unsupported type: "+data.getClass().getName()); //if the data is not a supported type, raise an error
     }
 
@@ -186,13 +204,29 @@ abstract public class Listable {
 
     private static Object unjsonifyNull() {return null;}
 
-    private static Object unjsonifyBool(String jsonStr) {return jsonStr.equals("true");}
+    private static Boolean unjsonifyBool(String jsonStr) {return jsonStr.equals("true");}
 
-    private static Object unjsonifyNumber(String jsonStr) {
-        return ""; //TODO: Implement this
-    }
+    private static Number unjsonifyNumber(String jsonStr) {
+        if (jsonStr.contains(".") || jsonStr.toLowerCase().contains("e")) {
+            // Decimal number or scientific notation
+            double doubleValue = Double.parseDouble(jsonStr); // Start with double
+            if (Math.abs(doubleValue) <= Float.MAX_VALUE) {
+                return (float) doubleValue; // Convert to float if within range
+            } else {
+                return doubleValue; // Use double if too large for float
+            }
+        } else {
+            // Whole number
+            long longValue = Long.parseLong(jsonStr); // Start with long
+            if (longValue <= Integer.MAX_VALUE && longValue >= Integer.MIN_VALUE) {
+                return (int) longValue; // Convert to int if within range
+            } else {
+                return longValue; // Use long if too large for int
+            }
+        }
+    }    
 
-    private static Object unjsonifyString(String jsonStr) {
+    private static String unjsonifyString(String jsonStr) {
         jsonStr = jsonStr.substring(1, jsonStr.length()-1); //remove the first and last char since they are ""
         StringBuilder result = new StringBuilder();
         int i = 0;
@@ -276,16 +310,11 @@ abstract public class Listable {
                 }
             }
             key = ((String)element).substring(0, splitIndex).strip();
-            value = ((String)element).substring(splitIndex+1).strip();
-            key = (String)unjsonify(key);
-            value = (String)unjsonify(value);
-
-            result.set(key, value);
+            value = ((String)element).substring(splitIndex + 1).strip();
+            result.set((String)unjsonifyString(key), unjsonify(value));
         });
-
         return result;
     }
-
 
     private static List topLevelParser(String jsonStr) {
         jsonStr = jsonStr.substring(1, jsonStr.length()-1); //remove the first and last char since they are {} or []

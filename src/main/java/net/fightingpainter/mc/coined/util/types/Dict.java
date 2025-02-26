@@ -263,7 +263,7 @@ public class Dict extends Listable {
      * @return The JSON string
     */
     public String toJson() {
-        return jsonify(data, null, null);
+        return jsonify(copy(), null, null);
     }
 
     /**
@@ -272,7 +272,7 @@ public class Dict extends Listable {
      * @return The JSON string
     */
     public String toJson(int indent) {
-        return jsonify(data, indent, null);
+        return jsonify(copy(), indent);
     }
 
     /**
@@ -282,5 +282,24 @@ public class Dict extends Listable {
     */
     public static Dict fromJson(String json) {
         return (Dict) unjsonify(json);
+    }
+
+    //============================== String ==============================\\
+
+    /**
+     * Convert the dictionary to a string
+     * @param formatted Whether the string should be formatted
+     * @return The string
+    */
+    public String toString(boolean formatted) {
+        return jsonify(copy(), formatted ? 4 : null);
+    }
+
+    /**
+     * Convert the dictionary to a string
+     * @return The string
+    */
+    public String toString() {
+        return jsonify(copy());
     }
 }
