@@ -20,35 +20,8 @@ public class CurrencyText {
     public static final int GOLD = CoinType.GOLD.getNameColor();
     public static final int PLATINUM = CoinType.PLATINUM.getNameColor();
 
-    private static final String currency_symbol = "G"; //TODO: make this Configurable
-
-
-
-    public static String currencyValue(long value) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator('\''); //Set the custom grouping separator
-        DecimalFormat formatter = new DecimalFormat("#,###", symbols); // Create a new DecimalFormat with the custom symbols
-        String text = formatter.format(value);
-        return text;
-    }
-
-    public static Component Label(String key, long value, int labelColor) {
-        Component labelComponent = Component.translatable(Coined.MOD_ID+".label."+key, currencyValue(value)+currency_symbol);
-        return Txt.colored(labelComponent, labelColor);
-    }
-
-    public static Component Label(String key, long value, int valueColor, int labelColor) {
-        Component valueComponent = Txt.colored(currencyValue(value)+currency_symbol, valueColor);
-        Component labelComponent = Component.translatable(Coined.MOD_ID+".label."+key, valueComponent).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(labelColor)));
-        return labelComponent;
-    }
-
-    public static Component Label(String key, long value, int valueColor, int labelColor, int currencySymbolColor) {
-        Component valueComponent = Txt.concat(Txt.colored(currencyValue(value), valueColor), Txt.colored(currency_symbol, currencySymbolColor));
-        Component labelComponent = Component.translatable(Coined.MOD_ID+".label."+key, valueComponent).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(labelColor)));
-        return labelComponent;
-    }
-
+    public static final String SYMBOL = "\uE090"; //the currency symbol
+    
     /**
      * Formats a long value by adding a custom grouping separator or something like that
      * @param value The value to format
@@ -59,7 +32,7 @@ public class CurrencyText {
         symbols.setGroupingSeparator('\''); //set the separator
         DecimalFormat formatter = new DecimalFormat("#,###", symbols); //create the formatter
         String text = formatter.format(value); //format the value
-        return text; //return the formatted value
+        return text+SYMBOL; //return the formatted value
     }
 
     //============================== Colored Text ==============================\\
@@ -118,7 +91,7 @@ public class CurrencyText {
     */
     public static Component label(String key, long value, int labelColor) {
         key = Coined.MOD_ID+".label."+key; //get the key
-        String valueText = formatValue(value)+currency_symbol; //format the value
+        String valueText = formatValue(value); //format the value
         Component labelComponent = Component.translatable(key, valueText); //create the label component
         return Txt.colored(labelComponent, labelColor); //return the colored label component
     }
@@ -130,7 +103,7 @@ public class CurrencyText {
      * @return The created Value Label Component
     */
     public static Component valueLabel(long value, int labelColor) {
-        return Label("value", value, labelColor);
+        return label("value", value, labelColor);
     }
 
     /**
@@ -156,6 +129,10 @@ public class CurrencyText {
      * @param value The value
      * @return The created Silver Label Component
     */
+    public static Component silverLabel(long value) {
+        return label("silver", value, SILVER);
+    }
+    
 
 
 

@@ -7,7 +7,7 @@
 
         {
             "type": "bitmap",
-            "file": "coined:font/currency.png",
+            "file": "coined:font/symbol.png",
             "ascent": 7,
             "height": 8,
             "chars": ["\uE090"]
@@ -16,17 +16,20 @@
         {
             "type": "bitmap",
             "file": "coined:font/currency.png",
-            "ascent": 6,
-            "height": 8,
-            "x": 7,
-            "chars": ["\uE091"]
+            "ascent": 10,
+            "height": 11,
+            "chars": ["\uE091\uE092\uE093\uE094"]
         },
 
         {
             "type": "space",
             "advances": {
-                "\uE090": 7,
-                "\uE091": 6
+                "\uE090": 6,
+
+                "\uE091": 8,
+                "\uE092": 8,
+                "\uE093": 10,
+                "\uE094": 10
             }
         }
     ]

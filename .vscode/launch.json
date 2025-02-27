@@ -12,11 +12,11 @@
       "projectName": "CoinedMod",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\clientRunProgramArgs.txt"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\clientRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\clientRunVmArgs.txt",
-        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\bin\\main"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\bin\\main"
       ],
       "cwd": "${workspaceFolder}\\run",
       "env": {},
@@ -34,11 +34,11 @@
       "projectName": "CoinedMod",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\dataRunProgramArgs.txt"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\dataRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\dataRunVmArgs.txt",
-        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\bin\\main"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\dataRunVmArgs.txt",
+        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\bin\\main"
       ],
       "cwd": "${workspaceFolder}\\run",
       "env": {},
@@ -56,11 +56,11 @@
       "projectName": "CoinedMod",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\gameTestServerRunProgramArgs.txt"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\gameTestServerRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\gameTestServerRunVmArgs.txt",
-        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\bin\\main"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\gameTestServerRunVmArgs.txt",
+        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\bin\\main"
       ],
       "cwd": "${workspaceFolder}\\run",
       "env": {},
@@ -78,11 +78,11 @@
       "projectName": "CoinedMod",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\serverRunProgramArgs.txt"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\serverRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\build\\moddev\\serverRunVmArgs.txt",
-        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\CoinedMod\\bin\\main"
+        "@C:\\Users\\lechi\\Desktop\\CoinedMod\\build\\moddev\\serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dcoined%%C:\\Users\\lechi\\Desktop\\CoinedMod\\bin\\main"
       ],
       "cwd": "${workspaceFolder}\\run",
       "env": {},
