@@ -59,11 +59,4 @@ public class Client {
 
     //============================== private stuff ==============================\\
 
-    private void RegisterFonts() { //register fonts
-
-
-
-
-    }
-
 }
