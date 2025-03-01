@@ -14,25 +14,29 @@ public enum CoinType {
     COPPER( //The copper coin 
         1,
         0xae5b3c,
-        ModItems.COPPER_COIN
+        ModItems.COPPER_COIN,
+        255
     ),
     
     SILVER( //The silver coin
         100,
         0x8c8c8c,
-        ModItems.SILVER_COIN
+        ModItems.SILVER_COIN,
+        255
     ),
     
     GOLD( //The gold coin
         10000,
         0xffd700,
-        ModItems.GOLD_COIN
+        ModItems.GOLD_COIN,
+        255
     ),
     
     PLATINUM( //The platinum coin
         1000000,
         0xd7d3e0,
-        ModItems.PLATINUM_COIN
+        ModItems.PLATINUM_COIN,
+        255
     );
     
 
@@ -40,19 +44,20 @@ public enum CoinType {
     private final long value;
     private final int nameColor;
     private final DeferredItem<Item> item;
-
+    private final int maxBagSize; //TODO: make this configurable
 
     /**
      * The Coins Constructor
      * @param value The value of a single coin
      * @param nameColor The color of the coin's name (the color used for all the text and stuff)
      * @param item The item that represents the coin
-     *
+     * @param maxBagSize The maximum amount of this coin that can be stored in a single MoneyBag
     */
-    CoinType(long value, int nameColor, DeferredItem<Item> item) {
+    CoinType(long value, int nameColor, DeferredItem<Item> item, int maxBagSize) {
         this.value = value;
         this.nameColor = nameColor;
         this.item = item;
+        this.maxBagSize = maxBagSize;
     }
     
     //============================== Operations ==============================\\
@@ -80,4 +85,10 @@ public enum CoinType {
      * @return the item that represents the coin
     */
     public DeferredItem<Item> getItem() {return item;}
+
+    /**
+     * Use to get the Maximum amount of this coin that can be stored in a single MoneyBag
+     * @return the maximum amount of this coin that can be stored in a single MoneyBag
+    */
+    public int getMaxBagSize() {return maxBagSize;}
 }

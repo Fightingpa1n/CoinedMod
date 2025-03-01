@@ -84,6 +84,21 @@ public class Money {
     public int getPlatinumAmount() {
         return platinum_coin_amount;
     }
+
+    /**
+     * Returns the amount of Coins of the given type stored
+     * @param coinType the type of coin that should be checked
+     * @return the amount of coins of the given type stored
+    */
+    public int getAmount(CoinType coinType) {
+        switch (coinType) {
+            case COPPER: return getCopperAmount();
+            case SILVER: return getSilverAmount();
+            case GOLD: return getGoldAmount();
+            case PLATINUM: return getPlatinumAmount();
+            default: return 0;
+        }
+    }
     
     //=============== Get (Value) ===============\\
     /**
@@ -122,6 +137,17 @@ public class Money {
         return CoinType.PLATINUM.getValue(platinum_coin_amount);
     }
 
+
+    /**
+     * Returns the Value of the Coins of the given type stored
+     * @param coinType the type of coin that should be checked
+     * @return the value of the coins of the given type stored
+    */
+    public long getValue(CoinType coinType) {
+        return coinType.getValue(getAmount(coinType));
+    }
+
+
     /**
      * Returns the Total Value of all the Coins Stored inside the Money Object (basically how much money is this bag)
      * @return total money in this money object
@@ -155,6 +181,19 @@ public class Money {
     */
     public void setPlatinumAmount(int amount) {
         platinum_coin_amount = amount > 0 ? amount : 0;
+    }
+
+    /** Sets the amount of Coins of the given type stored (will be set to 0 if negative)
+     * @param coinType the type of coin that should be set
+     * @param amount the amount of coins that should be stored
+    */
+    public void setAmount(CoinType coinType, int amount) {
+        switch (coinType) {
+            case COPPER: setCopperAmount(amount); break;
+            case SILVER: setSilverAmount(amount); break;
+            case GOLD: setGoldAmount(amount); break;
+            case PLATINUM: setPlatinumAmount(amount); break;
+        }
     }
     
     //=============== Has ===============\\
@@ -190,6 +229,15 @@ public class Money {
         return platinum_coin_amount > 0;
     }
 
+    /**
+     * Checks if the Money Object has any Coins of the given type (amount > 0)
+     * @param coinType the type of coin that should be checked
+     * @return true if there are any coins of the given type stored otherwise false
+    */
+    public boolean hasType(CoinType coinType) {
+        return getAmount(coinType) > 0;
+    }
+    
     /**
      * Checks if the Money Object has any coins inside
      * @return true if there are any coins stored otherwise false

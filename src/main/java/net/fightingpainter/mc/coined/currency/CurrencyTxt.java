@@ -6,13 +6,11 @@ import java.text.DecimalFormatSymbols;
 import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.util.Txt;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 
 /**
  * an Extension of my Txt Util Class but this one specifically contains  
 */
-public class CurrencyText {
+public class CurrencyTxt {
     //============================== Colors ==============================\\
     public static final int TOTAL = 0xbdc9bf;
     public static final int COPPER = CoinType.COPPER.getNameColor();
