@@ -1,7 +1,9 @@
 package net.fightingpainter.mc.coined.currency;
 
+import net.fightingpainter.mc.coined.items.CoinItem;
 import net.fightingpainter.mc.coined.items.ModItems;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 /**
@@ -10,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 */
 public enum CoinType {
     
-    //============================== Coin Types ==============================\\
+    //============================== Coin Types ==============================\
     COPPER( //The copper coin 
         1,
         0xae5b3c,
@@ -40,7 +42,7 @@ public enum CoinType {
     );
     
 
-    //============================== Enum Definition (Ignore everything past this line, as it's just for setting stuff) ==============================\\
+    //============================== Enum Definition (Ignore everything past this line, as it's just for setting stuff) ==============================\
     private final long value;
     private final int nameColor;
     private final DeferredItem<Item> item;
@@ -60,7 +62,7 @@ public enum CoinType {
         this.maxBagSize = maxBagSize;
     }
     
-    //============================== Operations ==============================\\
+    //============================== Operations ==============================\
     /**
      * Use to get the Value of a single coin of this Type
      * @return the value of a single coin
@@ -91,4 +93,18 @@ public enum CoinType {
      * @return the maximum amount of this coin that can be stored in a single MoneyBag
     */
     public int getMaxBagSize() {return maxBagSize;}
+
+
+    //============================== Static Methods ==============================\
+
+    /**
+     * Use to get the CoinType of a specified ItemStack
+     * @param coin the ItemStack to get the CoinType from
+     * @return the CoinType of the ItemStack
+    */
+    public static CoinType getCoinType(ItemStack item) {
+        if (item.getItem() instanceof CoinItem coinItem) {
+            return coinItem.getCoinType();
+        } else {return null;}
+    }
 }
