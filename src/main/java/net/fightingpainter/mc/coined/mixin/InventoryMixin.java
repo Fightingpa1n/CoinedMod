@@ -8,18 +8,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+// import net.minecraft.world.inventory.Slot;
+// import net.minecraft.world.item.Item;
+// import net.minecraft.world.item.ItemStack;
 
-import net.fightingpainter.mc.coined.Coined;
-import net.fightingpainter.mc.coined.currency.CoinType;
-import net.fightingpainter.mc.coined.items.CoinItem;
-import net.fightingpainter.mc.coined.items.CurrencyItem;
-import net.fightingpainter.mc.coined.items.ModItems;
-import net.fightingpainter.mc.coined.items.MoneyBagItem;
-import net.fightingpainter.mc.coined.util.Money;
-import net.fightingpainter.mc.coined.util.MouseButton;
+// import net.fightingpainter.mc.coined.Coined;
+// import net.fightingpainter.mc.coined.currency.CoinType;
+// import net.fightingpainter.mc.coined.items.CoinItem;
+// import net.fightingpainter.mc.coined.items.CurrencyItem;
+// import net.fightingpainter.mc.coined.items.ModItems;
+// import net.fightingpainter.mc.coined.items.MoneyBagItem;
+// import net.fightingpainter.mc.coined.util.Money;
+// import net.fightingpainter.mc.coined.util.MouseButton;
 
 
 @Mixin(AbstractContainerMenu.class)
@@ -27,7 +27,7 @@ public class InventoryMixin {
 
     @Inject(method = "clicked", at = @At("HEAD"), cancellable = true)
     private void onSlotClicked(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
-        if (!player.level().isClientSide()) {
+       /*  if (!player.level().isClientSide()) {
 
             Coined.LOGGER.info("click!");
             AbstractContainerMenu container = (AbstractContainerMenu)(Object)this; //get container
@@ -157,6 +157,6 @@ public class InventoryMixin {
                 }
             }
 
-        }
+        } */
     }
 }
