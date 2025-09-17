@@ -4,14 +4,15 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-
+import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.currency.CoinType;
 import net.fightingpainter.mc.coined.currency.CurrencyTxt;
 import net.fightingpainter.mc.coined.util.Money;
@@ -25,14 +26,18 @@ import net.fightingpainter.mc.coined.util.Txt;
 public class CoinItem extends CurrencyItem {
     private final CoinType coinType;
 
-
-    //============================== Item Behavior ==============================\\    
+    //======================================== Item Behavior ========================================\\
+    /**
+     * Constructor for the CoinItem
+     * @param coinType The CoinType associated with this CoinItem
+    */
     public CoinItem(CoinType coinType) { //constructor
-        super(new Properties().stacksTo(64));
+        super(new Properties().stacksTo(coinType.getMaxStackSize()));
         this.coinType = coinType;
     }
+
     
-    //=============== Display Stuff ===============\\
+    //==================== Display Stuff ====================\\
     @Override
     public Component getName(@Nonnull ItemStack stack) { //Override the getName method to do dynamic Naming
         String key = stack.getItem().getDescriptionId(); //okay holy... I know mojang naming conventions are bad but come on... I mean call it TranslationKey or something? why description? and why the id? a!
@@ -49,14 +54,19 @@ public class CoinItem extends CurrencyItem {
         }
     }
 
-
-    //============================== Money Stuff ==============================\\
+    //======================================== Money Stuff ========================================\\
     /** returns the CoinType associated with this CoinItem */
     public CoinType getCoinType() {return coinType;}
-
+    
     @Override
-    public Money getValue(ItemStack stack) { //override the getValue method to return the value of the stack
-        return new Money(coinType.getValue(stack.getCount()));
+    public long getValue(ItemStack stack) { //override the getValue method to return the value of the stack
+        return coinType.getValue(stack.getCount()); //return the value of the stack
     }
 
+    @Override
+    public Money getMoney(ItemStack stack) { //override the getMoney method to return a
+        Money money = new Money(); //create a new Money object
+        coinType.setAmountInMoney(money, stack.getCount()); //set the amount of this CoinType in the Money object
+        return money; //return the Money object
+    }
 }

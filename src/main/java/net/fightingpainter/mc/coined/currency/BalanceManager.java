@@ -1,96 +1,138 @@
 package net.fightingpainter.mc.coined.currency;
 
-import java.nio.file.Path;
-
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.storage.LevelResource;
-
-import net.fightingpainter.mc.coined.Coined;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.fightingpainter.mc.coined.data.ModDataTypes;
+import net.fightingpainter.mc.coined.data.SyncHelper;
 import net.fightingpainter.mc.coined.util.Money;
-import net.fightingpainter.mc.coined.util.PlayerBalance;
 
+/** 
+ * BalanceManager is a Helper class to manage player balances */
+public final class BalanceManager {
 
-public class BalanceManager {
-    private static Path balanceDataPath; //path to the balance data file
+    //======================================== Balance ========================================\\
+    //==================== Get ====================\\
+    /**
+     * Gets the balance of a player from the player's data component
+     * @param player The player entity to get the balance of
+     * @return The balance of the player as a long value
+     */
+    public static long getPlayerBalance(Player player) {
+        return player.getData(ModDataTypes.PLAYER_BALANCE.get());
+    }
     
-    //============================== Server Data Loader ==============================\\
     /**
-     * Loads the balance data for the server (this needs to be called on server start, reload and other such things. has to be called before any other methods can be used)
-     * @param server The server to load the data for
-    */
-    public static void loadBalanceData(MinecraftServer server) {
-        Coined.LOGGER.info("Loading Balance Data File...");
-        Path worldFolder = server.getWorldPath(LevelResource.ROOT);
-        Path dataFolder = worldFolder.resolve("data"); //get the data folder
-        balanceDataPath = dataFolder.resolve("balance.json"); //get the path to the balance data file
+     * Gets the balance of a player as a Money object
+     * @param player The player entity to get the balance of
+     * @return The balance of the player as a Money object
+     */
+    public static Money getPlayerMoney(Player player) {
+        return Money.fromValue(getPlayerBalance(player));
     }
-
-    private static PlayerBalance getPeeBalls(Player player) { ///please semd help i am dying inside aAAAAAAAAAAAAaaaaa
-        return new PlayerBalance(player.getUUID().toString(), balanceDataPath);
-    }
-
-    //============================== Public Handeling ==============================\\
+    
+    //==================== Set ====================\\
     /**
-     * Gets the balance of a player
-     * @param player The player to get the balance of
-     * @return The balance of the player
+     * Sets the balance of a player in the player's data component
+     * @param player The player entity to set the balance of
+     * @param newBalance The new balance to set for the player
     */
-    public static Money getBalance(Player player) {
-        return getPeeBalls(player).getBalance();
+    public static void setPlayerBalance(Player player, long newBalance) {
+        player.setData(ModDataTypes.PLAYER_BALANCE.get(), newBalance);
+        SyncHelper.broadcast(player, newBalance);
     }
 
     /**
-     * Sets the balance of a player (this will overwrite the current balance of the player) Note: the balance will automatically be set to 0 if it is negative
-     * @param player The player to set the balance of
-     * @param balance The new balance of the player
+     * Sets the balance of a player in the player's data component using a Money object
+     * @param player The player entity to set the balance of
+     * @param money The Money object to set as the player's balance
     */
-    public static void setBalance(Player player, Money newBalance) {
-        getPeeBalls(player).setBalance(newBalance);
+    public static void setPlayerBalance(Player player, Money money) {
+        setPlayerBalance(player, money.getTotalValue());
+    }
+
+    //==================== Add ====================\\
+    /**
+     * Adds an amount to the player's balance
+     * @param player The player entity to add the amount to
+     * @param amount The amount to add to the player's balance
+    */
+    public static void addPlayerBalance(Player player, long amount) {
+        long newBalance = getPlayerBalance(player) + amount;
+        setPlayerBalance(player, newBalance);
+    }
+    
+    /**
+     * Adds an amount to the player's balance using a Money object
+     * @param player The player entity to add the amount to
+     * @param money The Money object to add to the player's balance
+    */
+    public static void addPlayerBalance(Player player, Money money) {
+        addPlayerBalance(player, money.getTotalValue());
+    }
+
+    //==================== Subtract ====================\\
+    /**
+     * Subtracts an amount from the player's balance
+     * @param player The player entity to subtract the amount from
+     * @param amount The amount to subtract from the player's balance
+    */
+    public static void subtractPlayerBalance(Player player, long amount) {
+        long newBalance = Math.max(0, getPlayerBalance(player) - amount); //prevent negative balance
+        setPlayerBalance(player, newBalance);
     }
 
     /**
-     * Adds an amount to the balance of a player
-     * @param player The player to add the amount to
-     * @param amount The amount to add
+     * Subtracts an amount from the player's balance using a Money object
+     * @param player The player entity to subtract the amount from
+     * @param money The Money object to subtract from the player's balance
     */
-    public static void addBalance(Player player, Money amount) {
-        getPeeBalls(player).addBalance(amount);
+    public static void subtractPlayerBalance(Player player, Money money) {
+        subtractPlayerBalance(player, money.getTotalValue());
     }
 
+    //==================== has Enough ====================\\
     /**
-     * Subtracts an amount from the balance of a player
-     * @param player The player to subtract the amount from
-     * @param amount The amount to subtract
+     * Checks if the player has enough balance to cover the specified amount
+     * @param player The player entity to check the balance of
+     * @param amount The amount to check against the player's balance
+     * @return True if the player has enough balance, false otherwise
     */
-    public static void subtractBalance(Player player, Money amount) {
-        getPeeBalls(player).subtractBalance(amount);
+    public static boolean hasEnough(Player player, long amount) {
+        return getPlayerBalance(player) >= amount;
+    }
+    
+    /**
+     * Checks if the player has enough balance to cover the specified Money object
+     * @param player The player entity to check the balance of
+     * @param money The Money object to check against the player's balance
+     * @return True if the player has enough balance, false otherwise
+    */
+    public static boolean hasEnough(Player player, Money money) {
+        return hasEnough(player, money.getTotalValue());
     }
 
+    //==================== Try Subtract ====================\\
     /**
-     * Checks if a player has enough money
-     * @param player The player to check
-     * @param amount The amount to check for
-     * @return True if the player has enough money, false if not
+     * Attempts to subtract an amount from the player's balance
+     * @param player The player entity to attempt to subtract the amount from
+     * @param amount The amount to attempt to subtract from the player's balance
+     * @return True if the subtraction was successful, false if the player did not have enough balance
     */
-    public static boolean hasEnough(Player player, Money amount) {
-        Money balance = getBalance(player);
-        return balance.enough(amount);
-    }
-
-    /**
-     * Pays an amount of money as long as they have enough
-     * @param player The player that has to pay
-     * @param amount The amount to pay
-     * @return True if the player had enough money and the payment was successful, false if not 
-    */
-    public static boolean pay(Player player, Money amount) {
+    public static boolean trySubstract(Player player, long amount) {
         if (hasEnough(player, amount)) {
-            subtractBalance(player, amount);
+            subtractPlayerBalance(player, amount);
             return true;
-        }
-        return false;
+        } return false;
     }
 
-
+    /**
+     * Attempts to subtract a Money object from the player's balance
+     * @param player The player entity to attempt to subtract the Money object from
+     * @param money The Money object to attempt to subtract from the player's balance
+     * @return True if the subtraction was successful, false if the player did not have enough balance
+    */
+    public static boolean trySubstract(Player player, Money money) {
+        return trySubstract(player, money.getTotalValue());
+    }
 }

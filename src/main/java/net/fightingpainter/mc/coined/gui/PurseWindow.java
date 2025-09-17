@@ -1,6 +1,7 @@
 package net.fightingpainter.mc.coined.gui;
 
 import net.fightingpainter.mc.coined.Coined;
+import net.fightingpainter.mc.coined.currency.BalanceManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -31,6 +32,12 @@ public class PurseWindow {
 
         // Render some text inside the embedded GUI
         guiGraphics.drawString(Minecraft.getInstance().font, Component.literal("Purse GUI"), windowPosX + 5, windowPosY + 5, 0xFFFFFF);
+
+        //DEBUG
+        guiGraphics.drawString(Minecraft.getInstance().font, Component.literal(BalanceManager.getPlayerMoney(Minecraft.getInstance().player).toString()), windowPosX + 5, windowPosY + 20, 0xFFFFFF);
+
+
+        
 
         // Restore the previous matrix
         guiGraphics.pose().popPose();

@@ -26,9 +26,7 @@ public class ModItems {
 
     public static final DeferredItem<Item> MONEY_BAG = ITEM_REGISTER.register("money_bag", () -> new MoneyBagItem());
 
-
-
-
+    
     //============================== Block Items ==============================\\
     public static final DeferredItem<BlockItem> SHOP_BLOCK_WHITE_ITEM = registerBlockItem(ModBlocks.SHOP_BLOCK_WHITE);
     public static final DeferredItem<BlockItem> SHOP_BLOCK_LIGHT_GRAY_ITEM = registerBlockItem(ModBlocks.SHOP_BLOCK_LIGHT_GRAY);

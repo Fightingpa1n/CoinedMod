@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.commands.arguments.EntityArgument;
 
-public class MoneyCommand {
+public class MoneyCommand { //TODO: clean up, also make it batter to use ingame. also they currently don't work as the commands are running on both client and server, but should be server only
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("balance")
@@ -83,8 +83,8 @@ public class MoneyCommand {
 
     private static int getBalance(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer) {
         try {
-            Money balance = BalanceManager.getBalance(targetPlayer);
-            context.getSource().sendSuccess(() -> Component.literal("Your balance is: " + balance.toString(true)), false);
+            Money balance = BalanceManager.getPlayerMoney(targetPlayer);
+            context.getSource().sendSuccess(() -> Component.literal("Your balance is: " + balance.toString()), false);
             return 1;
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,12 +101,11 @@ public class MoneyCommand {
             e.printStackTrace();
             return 0;
         }
-    
     }
 
     private static int setBalance(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer, long amount) {
         try {
-            BalanceManager.setBalance(targetPlayer, new Money(amount));
+            BalanceManager.setPlayerBalance(targetPlayer, amount);
             context.getSource().sendSuccess(() -> Component.literal(targetPlayer.getName().getString() + "'s balance has been set to: " + amount), true);
             return 1;
         } catch (Exception e) {
@@ -128,7 +127,7 @@ public class MoneyCommand {
 
     private static int addBalance(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer, long amount) {
         try {
-            BalanceManager.addBalance(targetPlayer, new Money(amount));
+            BalanceManager.addPlayerBalance(targetPlayer, amount);
             context.getSource().sendSuccess(() -> Component.literal("Added " + amount + " to " + targetPlayer.getName().getString() + "'s balance."), false);
             return 1;
         } catch (Exception e) {
@@ -151,7 +150,7 @@ public class MoneyCommand {
 
     private static int subtractBalance(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer, long amount) {
         try {
-            BalanceManager.subtractBalance(targetPlayer, new Money(amount));
+            BalanceManager.subtractPlayerBalance(targetPlayer, amount);
             context.getSource().sendSuccess(() -> Component.literal("Subtracted " + amount + " from " + targetPlayer.getName().getString() + "'s balance."), false);
             return 1;
         } catch (Exception e) {

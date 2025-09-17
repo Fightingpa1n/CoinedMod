@@ -10,10 +10,11 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import net.fightingpainter.mc.coined.blocks.ModBlocks;
+import net.fightingpainter.mc.coined.data.ModDataTypes;
 import net.fightingpainter.mc.coined.gui.menus.ModMenus;
 import net.fightingpainter.mc.coined.items.CreativeMenuAdderThingy;
 import net.fightingpainter.mc.coined.items.ModItems;
-import net.fightingpainter.mc.coined.nbt.ModDataComponentTypes;
+import net.fightingpainter.mc.coined.network.NetworkHandler;
 
 
 @Mod(Coined.MOD_ID)
@@ -21,7 +22,7 @@ public class Coined { //Main Mod Class
     public static final String MOD_ID = "coined"; //mod id
     public static final Logger LOGGER = LogUtils.getLogger(); //logger
     //I'm cool and this is deffenetly not just me trying to hype myself up because I just wanted to continue working on the mod but instead I'be been repairing java stuff for the past 2 hours now and I still can't get the game to run again... a
-
+    
     // Creates a new Block with the id "coined:example_block", combining the namespace and path
     // public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
     // Creates a new BlockItem with the id "coined:example_block", combining the namespace and path
@@ -51,7 +52,9 @@ public class Coined { //Main Mod Class
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModMenus.register(modEventBus);
-        ModDataComponentTypes.register(modEventBus);
+        ModDataTypes.register(modEventBus);
+
+        modEventBus.addListener(NetworkHandler::onRegister); //register network handler
 
         modEventBus.addListener(CreativeMenuAdderThingy::addCreative); //add items to creative menu
 
