@@ -16,8 +16,10 @@ import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.currency.CoinType;
 import net.fightingpainter.mc.coined.items.CoinItem;
 import net.fightingpainter.mc.coined.items.CurrencyItem;
+import net.fightingpainter.mc.coined.items.ModItems;
 import net.fightingpainter.mc.coined.items.MoneyBagItem;
 import net.fightingpainter.mc.coined.util.Money;
+import net.fightingpainter.mc.coined.util.MouseButton;
 
 
 @Mixin(AbstractContainerMenu.class)
@@ -33,12 +35,27 @@ public class InventoryMixin {
             // ItemStack clickedStack = slot.getItem(); //get itemstack
             // ItemStack carriedStack = container.getCarried(); //get carried itemstack
             
-            // if (!clickedStack.isEmpty() && clickedStack.getItem() instanceof CurrencyItem clickedCurrencyItem) { //if clicked a currency item
-            //     if (clickType == ClickType.PICKUP) { //if pick up (right click and left click)
-            //         MouseButton clickedMouseButton = button == 0 ? MouseButton.LEFT_CLICK : MouseButton.RIGHT_CLICK; //get the clicked mouse button
+            if (!clickedStack.isEmpty() && clickedStack.getItem() instanceof CurrencyItem) { //if clicked a currency item
+                if (clickType == ClickType.PICKUP) { //if pick up (right click and left click)
+                    MouseButton clickedMouseButton = button == 0 ? MouseButton.LEFT_CLICK : MouseButton.RIGHT_CLICK; //get the clicked mouse button
 
-            //         //if click a money bag item
-            //         if (clickedStack.getItem() instanceof MoneyBagItem) {
+
+                    //if right click with a Money bag on a currency item
+                    if(!carriedStack.isEmpty() && carriedStack.getItem() instanceof MoneyBagItem && clickedMouseButton == MouseButton.RIGHT_CLICK) {
+                        if(clickedStack.getItem() instanceof CoinItem) {
+                            MoneyBagItem.addCoinToBag(carriedStack, clickedStack); //add the coin to the bag
+                        }
+                        else if(clickedStack.getItem() instanceof MoneyBagItem) {
+                            MoneyBagItem.addBagToBag(carriedStack, clickedStack); //add the bag to the bag
+                        }
+
+                        slot.set(ItemStack.EMPTY); //set the slot to empty
+                        container.broadcastChanges(); //broadcast changes
+                        ci.cancel(); //cancel the click
+                    }
+
+                    //if click a money bag item
+                    if (clickedStack.getItem() instanceof MoneyBagItem) {
                         
             //             //if click with coin
             //             if (!carriedStack.isEmpty() && carriedStack.getItem() instanceof CoinItem) {
@@ -104,20 +121,35 @@ public class InventoryMixin {
             //             //if click with coin
             //             else if (!carriedStack.isEmpty() && carriedStack.getItem() instanceof CoinItem) {
                             
-            //                 //if left click
-            //                 if (clickedMouseButton == MouseButton.LEFT_CLICK) {
+                            //if left click
+                            if (clickedMouseButton == MouseButton.LEFT_CLICK) {
+                                //if same coin type and combined stack exeeds max stack size or two different coin types (create bag item and put in slot)
+                                if (((clickedStack.getItem() == carriedStack.getItem()) && (clickedStack.getCount()+carriedStack.getCount() > clickedStack.getMaxStackSize())) || (clickedStack.getItem() != carriedStack.getItem())) {
+                                    ItemStack bag = new ItemStack(ModItems.MONEY_BAG.get()); //create a new bag item
+                                    MoneyBagItem.addCoinToBag(bag, clickedStack); //add the clicked stack to the bag
+                                    MoneyBagItem.addCoinToBag(bag, carriedStack); //add the carried stack to the bag
+                                    slot.set(bag); //set the slot to the bag
+                                    container.setCarried(ItemStack.EMPTY); //set carried to empty
+                                    container.broadcastChanges(); //broadcast changes
+                                    ci.cancel(); //cancel the click
+                                }
+                            }
 
-            //                     //if same coin type and combined stack exeeds max stack size or two different coin types (create bag item and put in slot)
-            //                     if (clickedStack.getItem() == carriedStack.getItem() && clickedStack.getCount() + carriedStack.getCount() > clickedStack.getMaxStackSize() || clickedStack.getItem() != carriedStack.getItem()) {
-                                    
-
-            //                     }
-
-            //                 }
-
-                        
-
-
+                            //if right click
+                            else if (clickedMouseButton == MouseButton.RIGHT_CLICK) {
+                                //like left click but only put a single coin down
+                                if (((clickedStack.getItem() == carriedStack.getItem()) && (clickedStack.getCount()+1 > clickedStack.getMaxStackSize())) || (clickedStack.getItem() != carriedStack.getItem())) {
+                                    ItemStack bag = new ItemStack(ModItems.MONEY_BAG.get()); //create a new bag item
+                                    MoneyBagItem.addCoinToBag(bag, clickedStack); //add the clicked stack to the bag
+                                    ItemStack singularCoin = carriedStack.copy(); //copy the carried stack
+                                    singularCoin.setCount(1); //set the count to 1
+                                    MoneyBagItem.addCoinToBag(bag, singularCoin); //add the singular coin to the bag
+                                    slot.set(bag); //set the slot to the bag
+                                    carriedStack.shrink(1); //shrink the carried stack
+                                    container.broadcastChanges(); //broadcast changes
+                                    ci.cancel(); //cancel the click
+                                }
+                            }
 
             //             }
                         
@@ -127,11 +159,4 @@ public class InventoryMixin {
 
         }
     }
-
-
-    private enum MouseButton {
-        LEFT_CLICK,
-        RIGHT_CLICK
-    }
-
 }
