@@ -19,6 +19,7 @@ import net.fightingpainter.mc.coined.network.NetworkHandler;
 
 @Mod(Coined.MOD_ID)
 public class Coined { //Main Mod Class
+    
     public static final String MOD_ID = "coined"; //mod id
     public static final Logger LOGGER = LogUtils.getLogger(); //logger
     //I'm cool and this is deffenetly not just me trying to hype myself up because I just wanted to continue working on the mod but instead I'be been repairing java stuff for the past 2 hours now and I still can't get the game to run again... a

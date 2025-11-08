@@ -17,10 +17,10 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 
 import net.fightingpainter.mc.coined.Coined;
-import net.fightingpainter.mc.coined.currency.BalanceManager;
-import net.fightingpainter.mc.coined.currency.CoinType;
-import net.fightingpainter.mc.coined.currency.CurrencyTxt;
 import net.fightingpainter.mc.coined.data.ModDataTypes;
+import net.fightingpainter.mc.coined.gui.currency.BalanceManager;
+import net.fightingpainter.mc.coined.gui.currency.CoinType;
+import net.fightingpainter.mc.coined.gui.currency.CurrencyTxt;
 import net.fightingpainter.mc.coined.util.Money;
 import net.fightingpainter.mc.coined.util.Txt;
 

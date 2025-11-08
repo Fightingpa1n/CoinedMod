@@ -1,7 +1,7 @@
 package net.fightingpainter.mc.coined.util;
 
 import net.fightingpainter.mc.coined.Coined;
-import net.fightingpainter.mc.coined.currency.CoinType;
+import net.fightingpainter.mc.coined.gui.currency.CoinType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -56,4 +56,6 @@ public class Txt {
         return text(text).copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(color)));
     }
     
+    /** Returns an empty text component. */
+    public static Component empty() {return Component.empty();}
 }

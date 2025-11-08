@@ -1,4 +1,4 @@
-package net.fightingpainter.mc.coined.currency;
+package net.fightingpainter.mc.coined.gui.currency;
 
 import java.util.ArrayList;
 import java.util.List;

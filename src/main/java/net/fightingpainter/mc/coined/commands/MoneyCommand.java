@@ -5,7 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 
-import net.fightingpainter.mc.coined.currency.BalanceManager;
+import net.fightingpainter.mc.coined.gui.currency.BalanceManager;
 import net.fightingpainter.mc.coined.util.Money;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

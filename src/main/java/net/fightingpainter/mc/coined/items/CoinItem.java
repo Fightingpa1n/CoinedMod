@@ -13,8 +13,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.fightingpainter.mc.coined.Coined;
-import net.fightingpainter.mc.coined.currency.CoinType;
-import net.fightingpainter.mc.coined.currency.CurrencyTxt;
+import net.fightingpainter.mc.coined.gui.currency.CoinType;
+import net.fightingpainter.mc.coined.gui.currency.CurrencyTxt;
 import net.fightingpainter.mc.coined.util.Money;
 import net.fightingpainter.mc.coined.util.Txt;
 

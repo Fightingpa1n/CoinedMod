@@ -8,7 +8,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.blocks.ModBlocks;
-import net.fightingpainter.mc.coined.currency.CoinType;
+import net.fightingpainter.mc.coined.gui.currency.CoinType;
 import net.neoforged.bus.api.IEventBus;
 
 /**

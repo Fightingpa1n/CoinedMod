@@ -1,8 +1,8 @@
 package net.fightingpainter.mc.coined;
 
 import net.fightingpainter.mc.coined.commands.MoneyCommand;
-import net.fightingpainter.mc.coined.currency.BalanceManager;
 import net.fightingpainter.mc.coined.data.SyncHelper;
+import net.fightingpainter.mc.coined.gui.currency.BalanceManager;
 import net.fightingpainter.mc.coined.items.CoinItem;
 import net.fightingpainter.mc.coined.items.MoneyBagItem;
 import net.fightingpainter.mc.coined.util.Money;

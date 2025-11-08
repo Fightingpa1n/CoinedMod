@@ -13,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.api.distmarker.Dist;
-import net.fightingpainter.mc.coined.currency.CoinType;
-import net.fightingpainter.mc.coined.currency.CurrencyTxt;
 import net.fightingpainter.mc.coined.data.ModDataTypes;
+import net.fightingpainter.mc.coined.gui.currency.CoinType;
+import net.fightingpainter.mc.coined.gui.currency.CurrencyTxt;
 import net.fightingpainter.mc.coined.util.Money;
 import net.fightingpainter.mc.coined.util.Txt;
 

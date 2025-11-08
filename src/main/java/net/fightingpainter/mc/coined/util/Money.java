@@ -2,7 +2,7 @@ package net.fightingpainter.mc.coined.util;
 
 import java.util.Objects;
 
-import net.fightingpainter.mc.coined.currency.CoinType;
+import net.fightingpainter.mc.coined.gui.currency.CoinType;
 
 /** the Money Class is a helper class that stores money */
 public class Money {

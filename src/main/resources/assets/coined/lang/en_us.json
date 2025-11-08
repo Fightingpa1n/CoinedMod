@@ -26,9 +26,18 @@
     "coined.label.value": "Value: %s",
     "coined.label.total": "Total: %s",
 
-    "coined.button.purse.open": "Open Purse",
-    "coined.button.purse.close": "Close Purse",
-    "coined.button.purse.reset": "Reset Purse Position",
+    "coined.purse.title": "Purse",
+    
+    "coined.purse.button.deposit_all": "Deposit All",
+
+    "coined.purse.button.open": "Open Purse",
+    "coined.purse.button.close": "Close Purse",
+    "coined.purse.button.reset": "Reset Purse Position",
+
+    "coined.purse.button.add_one": "Add to Withdraw Amount",
+    "coined.purse.button.add_ten": "Add 10 to Withdraw Amount",
+    "coined.purse.button.subtract_one": "Subtract from Withdraw Amount",
+    "coined.purse.button.subtract_ten": "Subtract 10 from Withdraw Amount",
 
     "coined.tooltip.shift_info": "hold [Shift] for more info",
     "coined.added_to_purse": "added to purse!",

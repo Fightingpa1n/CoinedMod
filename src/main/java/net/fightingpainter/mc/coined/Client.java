@@ -2,8 +2,8 @@ package net.fightingpainter.mc.coined;
 
 import net.fightingpainter.mc.coined.blocks.ModBlocks;
 import net.fightingpainter.mc.coined.blocks.shop.ShopBlockEntityRenderer;
-import net.fightingpainter.mc.coined.gui.InventoryAdderThingy;
 import net.fightingpainter.mc.coined.gui.menus.ModMenus;
+import net.fightingpainter.mc.coined.gui.purse.InventoryPurseHandler;
 import net.fightingpainter.mc.coined.gui.screens.ShopScreen;
 import net.fightingpainter.mc.coined.items.ModItems;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ public class Client {
         event.enqueueWork(() -> {
 
             //register the InventoryGuiButton
-            InventoryAdderThingy inventoryGuiButton = new InventoryAdderThingy();
+            InventoryPurseHandler inventoryGuiButton = new InventoryPurseHandler();
             NeoForge.EVENT_BUS.register(inventoryGuiButton);
 
             

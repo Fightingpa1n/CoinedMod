@@ -1,4 +1,4 @@
-package net.fightingpainter.mc.coined.currency;
+package net.fightingpainter.mc.coined.gui.currency;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
