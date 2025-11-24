@@ -28,7 +28,7 @@
 
     "coined.purse.title": "Purse",
     
-    "coined.purse.button.deposit_all": "Deposit All",
+    "coined.purse.button.deposit": "Deposit All",
 
     "coined.purse.button.open": "Open Purse",
     "coined.purse.button.close": "Close Purse",
@@ -38,6 +38,10 @@
     "coined.purse.button.add_ten": "Add 10 to Withdraw Amount",
     "coined.purse.button.subtract_one": "Subtract from Withdraw Amount",
     "coined.purse.button.subtract_ten": "Subtract 10 from Withdraw Amount",
+
+    "coined.purse.button.withdraw": "Withdraw",
+
+    "purse.withdraw.input": "Test?",
 
     "coined.tooltip.shift_info": "hold [Shift] for more info",
     "coined.added_to_purse": "added to purse!",

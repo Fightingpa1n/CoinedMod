@@ -1,110 +1,174 @@
 package net.fightingpainter.mc.coined.gui.purse;
 
 import java.time.Duration;
+import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 
 import net.fightingpainter.mc.coined.Coined;
-import net.fightingpainter.mc.coined.gui.CustomButton;
-import net.fightingpainter.mc.coined.gui.CustomWidget;
 import net.fightingpainter.mc.coined.gui.currency.BalanceManager;
 import net.fightingpainter.mc.coined.gui.currency.CoinType;
 import net.fightingpainter.mc.coined.gui.currency.CurrencyTxt;
+import net.fightingpainter.mc.coined.util.widgets.CustomButton;
 import net.fightingpainter.mc.coined.util.Money;
 import net.fightingpainter.mc.coined.util.RenderHelper;
 import net.fightingpainter.mc.coined.util.Txt;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 
-public class CoinAmount extends CustomWidget {
+public class CoinAmount extends AbstractWidget {
 
     //class for displaying coin amounts in the Purse Window.
     //meaning we have multiple buttons and stuff
 
-    //to test: I will hardcode copper for now
-
     private final CoinType coinType;
-    private final CoinDisplay coinDisplay;
-    private AddButton addButton;
-    private SubtractButton subtractButton;
+
+    private static final int WIDTH = 80;
+    private static final int HEIGHT = 18;
     
-    public CoinAmount(CoinType coinType, int offsetX, int offsetY) {
-        super(0, 0, offsetX, offsetY);
+    private static final int COIN_DISPLAY_OFFSET_X = 0;
+    private static final int COIN_DISPLAY_OFFSET_Y = 1;
+    private final CoinDisplay coinDisplay;
+
+    private static final int COIN_AMOUNT_TEXT_OFFSET_X = 17;
+    private static final int COIN_AMOUNT_TEXT_OFFSET_Y = 5;
+    
+    private static final int ADD_BUTTON_OFFSET_X = 71;
+    private static final int ADD_BUTTON_OFFSET_Y = 0;
+    private final AddButton addButton;
+
+    private static final int SUBTRACT_BUTTON_OFFSET_X = 71;
+    private static final int SUBTRACT_BUTTON_OFFSET_Y = 9;
+    private final SubtractButton subtractButton;
+
+    
+    public CoinAmount(CoinType coinType, BiConsumer<CoinType, Boolean> onWithdrawCoinChange) {
+        super(0, 0, WIDTH, HEIGHT, Txt.empty());
+        this.active = false;
         this.coinType = coinType;
 
-        this.coinDisplay = (CoinDisplay) addChild(new CoinDisplay(coinType, 0, 0));
-        this.addButton = (AddButton) addChild(new AddButton(60, 0, button -> onAddPress()));
-        this.subtractButton = (SubtractButton) addChild(new SubtractButton(70, 0, button -> onSubtractPress()));
+        this.coinDisplay = new CoinDisplay(coinType);
+        this.addButton = new AddButton(button -> {onWithdrawCoinChange.accept(this.coinType, true);});
+        this.subtractButton = new SubtractButton(button -> {onWithdrawCoinChange.accept(this.coinType, false);});
+    }
+
+    public void init(ScreenEvent.Init event) {
+        event.addListener(this); //register this CoinAmount as a listener to the screen events
+        event.addListener(this.coinDisplay);
+        event.addListener(this.addButton);
+        event.addListener(this.subtractButton);
+    }
+
+    public void toggleVisibility(boolean visible) {
+        this.visible = visible;
+        this.coinDisplay.visible = visible;
+        this.coinDisplay.active = visible;
+        this.addButton.visible = visible;
+        this.addButton.active = visible;
+        this.subtractButton.visible = visible;
+        this.subtractButton.active = visible;
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics graphics, int x, int y) {
-        this.coinDisplay.renderCW(graphics, x, y);
-        
+    public void setPosition(int x, int y) {
+        super.setPosition(x, y);
+        this.coinDisplay.setPosition(x + COIN_DISPLAY_OFFSET_X,  y + COIN_DISPLAY_OFFSET_Y);
+        this.addButton.setPosition(x + ADD_BUTTON_OFFSET_X, y + ADD_BUTTON_OFFSET_Y);
+        this.subtractButton.setPosition(x + SUBTRACT_BUTTON_OFFSET_X, y + SUBTRACT_BUTTON_OFFSET_Y);
+    }
+
+    @Override
+    protected void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 301); //Move to a higher Z-level (300 is above most elements)
+
         Money playerMoney = BalanceManager.getPlayerMoney(BalanceManager.getCurrentPlayer());
         int coinAmount = this.coinType.getAmount(playerMoney);
-        RenderHelper.renderText(graphics, String.valueOf(coinAmount), RenderHelper.getFont(), coinType.getNameColor(), true, x + 18, y + 4);
-        
-        this.addButton.renderCW(graphics, x, y);
-        this.subtractButton.renderCW(graphics, x, y);
-    }
-    
-    private void onAddPress() {
-        Coined.LOGGER.info("Add button pressed for " + this.coinType.name());
-    }
-    
-    private void onSubtractPress() {
-        Coined.LOGGER.info("Subtract button pressed for " + this.coinType.name());
+        RenderHelper.renderText(graphics, String.valueOf(coinAmount), RenderHelper.getFont(), coinType.getNameColor(), true, this.getX() + COIN_AMOUNT_TEXT_OFFSET_X, this.getY() + COIN_AMOUNT_TEXT_OFFSET_Y);
+
+        graphics.pose().popPose();
     }
 
-
-    private class CoinDisplay extends CustomWidget {
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {} //No narration for now
+    
+    private class CoinDisplay extends AbstractWidget {
         
         private final CoinType coinType;
-
-        public CoinDisplay(CoinType coinType, int offsetX, int offsetY) {
-            super(16, 16, offsetX, offsetY);
+        
+        public CoinDisplay(CoinType coinType) {
+            super(0, 0, 16, 16, Txt.empty());
             this.coinType = coinType;
         }
 
         @Override
-        public void render(@Nonnull GuiGraphics graphics, int x, int y) {
-            graphics.renderFakeItem(new ItemStack(this.coinType.getItem()), x, y);
+        protected void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 301); //Move to a higher Z-level (300 is above most elements)
+            
+            graphics.renderFakeItem(new ItemStack(this.coinType.getItem()), this.getX(), this.getY());
+
+            if (this.isHoveredOrFocused()) {
+                long singleValue = this.coinType.getValue(); //get single coin value
+                setTooltip(Tooltip.create(CurrencyTxt.valueLabel(singleValue, this.coinType.getNameColor())));
+            }
+
+            graphics.pose().popPose();
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {} //No narration for now
+    }
+
+    private class AddButton extends CustomButton {
+        private static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/add_button.png");
+        private static final int BUTTON_WIDTH = 9;
+        private static final int BUTTON_HEIGHT = 9;
+
+        public AddButton(OnPress onPress) {super(BUTTON_TEXTURE, BUTTON_WIDTH, BUTTON_HEIGHT, onPress);}
+        
+        @Override
+        public void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 301); // Move to a higher Z-level (300 is above most elements)
+            super.renderWidget(graphics, mouseX, mouseY, partialTick); //call the parent render method
+            graphics.pose().popPose();
         }
 
         @Override
         protected void renderTooltip() {
-            long singleValue = this.coinType.getValue(); //get single coin value
-            setTooltip(Tooltip.create(CurrencyTxt.valueLabel(singleValue, this.coinType.getNameColor())));
-        }
-    }
-
-    private class AddButton extends CustomButton {
-        public AddButton(int offsetX, int offsetY, OnPress onPress) {
-            super(ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/add_button.png"), 10, 10, offsetX, offsetY, onPress);
-        }
-
-        @Override
-        public void renderTooltip() {
-            setTooltipDelay(Duration.ofSeconds(2));
-            if (Screen.hasShiftDown()) { setTooltip(Tooltip.create(Txt.colored("purse.button.add_ten", Txt.TOOLTIP)));}
-            else { setTooltip(Tooltip.create(Txt.colored("purse.button.add_one", Txt.TOOLTIP)));}
+            setTooltipDelay(Duration.ofSeconds(1));
+            if (Screen.hasShiftDown()) { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.add_ten"), Txt.TOOLTIP)));}
+            else { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.add_one"), Txt.TOOLTIP)));}
         }
     }
 
     private class SubtractButton extends CustomButton {
-        public SubtractButton(int offsetX, int offsetY, OnPress onPress) {
-            super(ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/subtract_button.png"), 10, 10, offsetX, offsetY, onPress);
+        private static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/subtract_button.png");
+        private static final int BUTTON_WIDTH = 9;
+        private static final int BUTTON_HEIGHT = 9;
+
+        public SubtractButton(OnPress onPress) {super(BUTTON_TEXTURE, BUTTON_WIDTH, BUTTON_HEIGHT, onPress);}
+
+        @Override
+        public void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 301); // Move to a higher Z-level (300 is above most elements)
+            super.renderWidget(graphics, mouseX, mouseY, partialTick); //call the parent render method
+            graphics.pose().popPose();
         }
 
         @Override
         public void renderTooltip() {
-            setTooltipDelay(Duration.ofSeconds(2));
-            if (Screen.hasShiftDown()) { setTooltip(Tooltip.create(Txt.colored("purse.button.subtract_ten", Txt.TOOLTIP)));}
-            else { setTooltip(Tooltip.create(Txt.colored("purse.button.subtract_one", Txt.TOOLTIP)));}
+            setTooltipDelay(Duration.ofSeconds(1));
+            if (Screen.hasShiftDown()) { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.subtract_ten"), Txt.TOOLTIP)));}
+            else { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.subtract_one"), Txt.TOOLTIP)));}
         }
     }
 }

@@ -1,7 +1,7 @@
 package net.fightingpainter.mc.coined.gui.purse;
 
+import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.gui.CustomButton;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,6 +14,12 @@ import net.neoforged.api.distmarker.Dist;
 
 @OnlyIn(Dist.CLIENT)
 public class InventoryPurseHandler {
+
+    /**
+     * The Inventory Purse Handler is responsible for integrating the Purse Into the players Inventory.
+     * also it handles the PurseButton Logic (opening/closing the purse) as well as the draging of the purse window. 
+    */
+
     private PurseButton button = new PurseButton(0, 0, this::onPurseButtonPress); //PurseButton instance
     private final int purseButtonX = -(4 + button.getWidth()); //x position of the button relativ to the top right corner of the inventory
     private final int purseButtonY = 4; //y position of the button relativ to the top right corner of the inventory
@@ -29,11 +35,12 @@ public class InventoryPurseHandler {
     private int dragOffsetY = 0; //offset of the purse from the mouse
 
     @SubscribeEvent
-    public void onScreenInit(ScreenEvent.Init.Post event) {
+    public void onScreenInit(ScreenEvent.Init.Post event) { //screen init get's called on each screen open (meaning reopening the inventory will also call this)
         if (event.getScreen() instanceof InventoryScreen inventoryScreen) {
             int buttonX = (inventoryScreen.getGuiLeft()+inventoryScreen.getXSize()) + purseButtonX; //calculate the x position of the button
             int buttonY = inventoryScreen.getGuiTop() + purseButtonY; //calculate the y position of the button
 
+            Coined.LOGGER.debug("Initializing Inventory Purse Handler: Button Position X: " + buttonX + " Y: " + buttonY);
             button.setPosition(buttonX, buttonY); //set postion of the button
             button.init(event); //init the button
             purse.init(event); //init the purse
@@ -48,22 +55,21 @@ public class InventoryPurseHandler {
             if (isInit) { //if it is the first time opening the purse
                 int purseX = button.getX() + initPosX; //purse x position
                 int purseY = button.getY() + initPosY; //purse y position
-                purse.setPos(purseX, purseY); //set the position of the purse
+                purse.setPosition(purseX, purseY); //set the position of the purse
                 isInit = false; //set isInit to false
             }
-            purse.onOpen(); //call the onOpen method of the purse
         } else { //on close
             if (Screen.hasShiftDown()) { //if shift is pressed don't close and just reset the position
                 int purseX = button.getX() + initPosX; //purse x position
                 int purseY = button.getY() + initPosY; //purse y position
-                purse.setPos(purseX, purseY); //set the position of the purse
+                purse.setPosition(purseX, purseY); //set the position of the purse
             } else {
                 button.toggleOpenSprites(false); //set the button to use the closed sprites
                 isPurseOpen = false; //close the purse
                 isDragging = false; //stop dragging the purse
-                purse.onClose(); //call the onClose method of the purse
             }
         }
+        purse.togglePurse(isPurseOpen);
     }
 
     @SubscribeEvent
@@ -74,11 +80,9 @@ public class InventoryPurseHandler {
         InventoryScreen inventoryScreen = (InventoryScreen) event.getScreen();
 
         //get gui right top corner
-        int buttonX = (inventoryScreen.getGuiLeft()+inventoryScreen.getXSize()) + purseButtonX; //calculate the x position of the button
+        int buttonX = (inventoryScreen.getGuiLeft() + inventoryScreen.getXSize()) + purseButtonX; //calculate the x position of the button
         int buttonY = inventoryScreen.getGuiTop() + purseButtonY; //calculate the y position of the button
         button.setPosition(buttonX, buttonY); //set the position of the button
-
-        if (isPurseOpen) {purse.render(event);} //render the purse (if visible)
     }
 
     @SubscribeEvent
@@ -88,8 +92,8 @@ public class InventoryPurseHandler {
         //handle drag start
         if (isPurseOpen) {
             if (purse.isDragArea(event.getMouseX(), event.getMouseY())) { //if you clicked on the drag area
-                dragOffsetX = (int) (event.getMouseX() - purse.getPosX()); //set the offset
-                dragOffsetY = (int) (event.getMouseY() - purse.getPosY()); //set the offset
+                dragOffsetX = (int) (event.getMouseX() - purse.getX()); //set the offset
+                dragOffsetY = (int) (event.getMouseY() - purse.getY()); //set the offset
 
                 isDragging = true;
                 event.setCanceled(true); //cancel the event
@@ -113,10 +117,10 @@ public class InventoryPurseHandler {
                 int screenWidth = event.getScreen().width;
                 int screenHeight = event.getScreen().height;
 
-                newPosX = Math.max(0, Math.min(newPosX, screenWidth - purse.getSizeX()));
-                newPosY = Math.max(0, Math.min(newPosY, screenHeight - purse.getSizeY()));
+                newPosX = Math.max(0, Math.min(newPosX, screenWidth - purse.getWidth()));
+                newPosY = Math.max(0, Math.min(newPosY, screenHeight - purse.getHeight()));
 
-                purse.setPos(newPosX, newPosY); //set the position of the purse
+                purse.setPosition(newPosX, newPosY); //set the position of the purse
             }
         }
     }
@@ -129,14 +133,5 @@ public class InventoryPurseHandler {
             if (isDragging) {isDragging = false;} //stop dragging the purse
         }
     }
-    
-
-
-
-
-
-
-
-
 
 }

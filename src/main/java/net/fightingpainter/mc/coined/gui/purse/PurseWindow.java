@@ -4,207 +4,186 @@ import javax.annotation.Nonnull;
 
 import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.gui.currency.BalanceManager;
+import net.fightingpainter.mc.coined.gui.currency.CoinType;
 import net.fightingpainter.mc.coined.gui.currency.CurrencyTxt;
 import net.fightingpainter.mc.coined.util.RenderHelper;
 import net.fightingpainter.mc.coined.util.Txt;
-
-import net.minecraft.client.Minecraft;
+import net.fightingpainter.mc.coined.util.widgets.CustomButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 
 public class PurseWindow extends AbstractWidget {
-
-        
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/bg.png");
-    private static final int WINDOW_WIDTH = 80;
-    private static final int WINDOW_HEIGHT = 96;
+    private static final int WINDOW_WIDTH = 90;
+    private static final int WINDOW_HEIGHT = 131;
+    private static final int DRAG_AREA_HEIGHT = 15; //height of the draggable area at the top of the purse window
+
+    private static final int TITLE_OFFSET_X = 5;
+    private static final int TITLE_OFFSET_Y = 5;
+    private static final int TITLE_WIDTH = 67; //max width of the title text
+
+    private static final int TOTAL_OFFSET_X = 5;
+    private static final int TOTAL_OFFSET_Y = 18;
+    private static final int TOTAL_WIDTH = 80; //max width of the total text
     
-    // Window position Info
-    private int windowPosX = 0;
-    private int windowPosY = 0;
+    private static final int DEPOSIT_BUTTON_OFFSET_X = 73;
+    private static final int DEPOSIT_BUTTON_OFFSET_Y = 5;
+    private Button depositButton = new DepositButton(button -> onDepositAll());
+
+    private static final int WITHDRAW_OFFSET_X = 5;
+    private static final int WITHDRAW_OFFSET_Y = 114;
+    private final Withdraw withdraw = new Withdraw(button -> onWithdraw());
     
-    private EditBox withdrawField;
+    private static final int COPPER_AMOUNT_OFFSET_X = 5;
+    private static final int COPPER_AMOUNT_OFFSET_Y = 31;
+    private final CoinAmount copperAmount = new CoinAmount(CoinType.COPPER, this::onWithdrawCoinChange);
+    
+    private static final int SILVER_AMOUNT_OFFSET_X = 5;
+    private static final int SILVER_AMOUNT_OFFSET_Y = 51;
+    private final CoinAmount silverAmount = new CoinAmount(CoinType.SILVER, this::onWithdrawCoinChange);
+    
+    private static final int GOLD_AMOUNT_OFFSET_X = 5;
+    private static final int GOLD_AMOUNT_OFFSET_Y = 71;
+    private final CoinAmount goldAmount = new CoinAmount(CoinType.GOLD, this::onWithdrawCoinChange);
+    
+    private static final int PLATINUM_AMOUNT_OFFSET_X = 5;
+    private static final int PLATINUM_AMOUNT_OFFSET_Y = 91;
+    private final CoinAmount platinumAmount = new CoinAmount(CoinType.PLATINUM, this::onWithdrawCoinChange);
     private long withdrawAmount = 0L;
     
-    private Button depositButton;
-
     public PurseWindow() {
         super(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, CommonComponents.EMPTY);
-        this.createDepositButton();
+        this.active = false;
+        this.togglePurse(false); //start closed
     }
-
-    private void createDepositButton() {
-        Component buttonText = Txt.trans("purse.button.deposit_all");
-        Component tooltipText = Txt.colored(Txt.trans("purse.button.deposit_all"), Txt.TOOLTIP);
-        
-        this.depositButton = Button.builder(
-            buttonText,
-            button -> onDepositAll()
-        )
-        .bounds(50, 3, 12, 8)  // x, y, width, height (relative to window)
-        .tooltip(Tooltip.create(tooltipText))
-        .build();
-    }
-
 
     public void init(ScreenEvent.Init event) {
-        // Update button position based on window position
-        this.depositButton.setX(windowPosX + 50);
-        this.depositButton.setY(windowPosY + 3);
+        event.addListener(this); //register purse window listener
+
+        event.addListener(this.depositButton);
+
+        this.withdraw.init(event);
+
+        this.copperAmount.init(event);
+        this.silverAmount.init(event);
+        this.goldAmount.init(event);
+        this.platinumAmount.init(event);
+
+        setPosition(this.getX(), this.getY()); //set initial position of the Purse Window
+    }
+
+    public void togglePurse(boolean open) {
+        this.visible = open;
+
+        this.depositButton.visible = open;
+        this.depositButton.active = open;
+
+        this.withdraw.toggleVisibility(open);
+
+        this.copperAmount.toggleVisibility(open);
+        this.silverAmount.toggleVisibility(open);
+        this.goldAmount.toggleVisibility(open);
+        this.platinumAmount.toggleVisibility(open);
+    }
+
+    
+    @Override
+    public void setPosition(int x, int y) {
+        super.setPosition(x, y); //set the position of the widget
         
-        // Add the deposit button to the screen's listeners
-        event.addListener(depositButton);
+        depositButton.setPosition(this.getX() + DEPOSIT_BUTTON_OFFSET_X, this.getY() + DEPOSIT_BUTTON_OFFSET_Y);
 
-        // --- Text input (EditBox) ---
-        int x = windowPosX + 5;
-        int y = windowPosY + 88;          // inside your 96px high window
-        int w = 70;
-        int h = 14;
-
-        withdrawField = new EditBox(
-            Minecraft.getInstance().font,
-            x, y, w, h,
-            Component.translatable("purse.withdraw.input")
-        );
-
-        // Optional hint/placeholder (method name differs by MC version; try setHint first, else setSuggestion)
-        try { withdrawField.setHint(Component.literal("Amount")); }
-        catch (Throwable t) { withdrawField.setSuggestion("Amount"); }
-
-        // Limit & numeric-only filter
-        withdrawField.setMaxLength(18);
-        withdrawField.setFilter(s -> s.matches("\\d*"));
-
-        // Keep your long in sync when the text changes
-        withdrawField.setResponder(s -> {
-            if (s == null || s.isEmpty()) { withdrawAmount = 0L; return; }
-            try {
-                withdrawAmount = Long.parseLong(s);
-            } catch (NumberFormatException e) {
-                withdrawAmount = 0L;
-            }
-        });
-
-        // Initial value (optional)
-        withdrawField.setValue("");
-
-        // Register with the screen so it receives focus, typing, mouse, etc.
-        event.addListener(withdrawField);
-    }
-
-    public void onOpen() {
-        this.visible = true;
-        this.active = true;
-    }
-
-    public void onClose() {
-        this.visible = false;
-        this.active = false;
+        withdraw.setPosition(this.getX() + WITHDRAW_OFFSET_X, this.getY() + WITHDRAW_OFFSET_Y);
+        
+        this.copperAmount.setPosition(this.getX() + COPPER_AMOUNT_OFFSET_X, this.getY() + COPPER_AMOUNT_OFFSET_Y);
+        this.silverAmount.setPosition(this.getX() + SILVER_AMOUNT_OFFSET_X, this.getY() + SILVER_AMOUNT_OFFSET_Y);
+        this.goldAmount.setPosition(this.getX() + GOLD_AMOUNT_OFFSET_X, this.getY() + GOLD_AMOUNT_OFFSET_Y);
+        this.platinumAmount.setPosition(this.getX() + PLATINUM_AMOUNT_OFFSET_X, this.getY() + PLATINUM_AMOUNT_OFFSET_Y);
     }
     
-
-
-    public void render(ScreenEvent.Render.Post event) { //render the GUI (each frame I think)
-        GuiGraphics graphics = event.getGuiGraphics();
-
-        // Update widget positions if they have changed
-        if (withdrawField != null) {
-            withdrawField.setX(windowPosX + 5);
-            withdrawField.setY(windowPosY + 88);
-        }
-        
-        if (depositButton != null) {
-            depositButton.setX(windowPosX + 50);
-            depositButton.setY(windowPosY + 3);
-        }
-
-        //let's try to add elements to make an ingame mockup
-        graphics.drawString(Minecraft.getInstance().font, Txt.trans("purse.title"), windowPosX + 5, windowPosY + 5, 0xFFFFFF);
-        
-        long balance = BalanceManager.getPlayerBalance(Minecraft.getInstance().player);
-
-        graphics.drawString(Minecraft.getInstance().font, CurrencyTxt.totalLabel(balance), windowPosX + 5, windowPosY + 20, 0xFFFFFF);
-
-        // Note: The depositButton and withdrawField are now handled by the Minecraft GUI system
-        // They will render themselves automatically since they're registered as listeners
-    }
-
-    public boolean isDragArea(double mouseX, double mouseY) { //since I can't just return the dragArea as a whole this is a function instead that will check that directly (Defining the drag area in here)
-        int dragAreaStartX = windowPosX; //top left corner of the window
-        int dragAreaStartY = windowPosY; //top left corner of the window
-        int dragAreaEndX = windowPosX + WINDOW_WIDTH; //the entire width of the window
-        int dragAreaEndY = windowPosY + 20; //Only the top 20 pixels are draggable
-
-        boolean mouseInDragX = mouseX >= dragAreaStartX && mouseX <= dragAreaEndX; //check if the mouse is within the X bounds of the drag area
-        boolean mouseInDragY = mouseY >= dragAreaStartY && mouseY <= dragAreaEndY; //check if the mouse is within the Y bounds of the drag area
-
-        if (depositButton != null && depositButton.isHoveredOrFocused()) {return false;} //don't allow dragging if the mouse is over the deposit button
-
-        return mouseInDragX && mouseInDragY; //return if the mouse is within the bounds of the drag area
-    }
-
-
-    /** returns the X postion of the Purse Window */
-    public int getPosX() {return windowPosX;}
-    /** returns the Y postion of the Purse Window */
-    public int getPosY() {return windowPosY;}
-
-    /** returns the X size of the Purse Window */
-    public int getSizeX() {return WINDOW_WIDTH;}
-    /** returns the Y size of the Purse Window */
-    public int getSizeY() {return WINDOW_HEIGHT;}
-
-    /** 
-     * sets the X and Y postion of the Purse Window
-     * @param x the X postion
-     * @param y the Y postion
-    */
-    public void setPos(int x, int y) {
-        windowPosX = x;
-        windowPosY = y;
-        
-        // Update positions of child widgets
-        if (depositButton != null) {
-            depositButton.setX(windowPosX + 50);
-            depositButton.setY(windowPosY + 3);
-        }
-        
-        if (withdrawField != null) {
-            withdrawField.setX(windowPosX + 5);
-            withdrawField.setY(windowPosY + 88);
-        }
-    }
-
-    private void onDepositAll() {
-        //TODO: send a packet to the server to deposit all currency items in the players inventory to their purse
-        Coined.LOGGER.info("Deposit All clicked");
-    }
-
-
+    
     @Override
     protected void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (!this.visible) return; //do not render if not visible
-
+        
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 300); // Move to a higher Z-level (300 is above most elements)
+        
+        RenderHelper.renderTexture(graphics, BACKGROUND_TEXTURE, WINDOW_WIDTH, WINDOW_HEIGHT, this.getX(), this.getY()); //render the background
+        
+        RenderHelper.renderText(graphics, Txt.trans("purse.title"), Txt.DEFAULT, true, this.getX() + TITLE_OFFSET_X, this.getY() + TITLE_OFFSET_Y); //render the title text
 
-        //Render the window background
-        RenderHelper.renderTexture(graphics, BACKGROUND_TEXTURE, WINDOW_WIDTH, WINDOW_HEIGHT, windowPosX, windowPosY);
-
-        RenderHelper.renderText(graphics, Txt.trans("purse.title"), 0xFFFFFF, false, windowPosX + 5, windowPosY + 5);
+        long total = BalanceManager.getPlayerBalance(BalanceManager.getCurrentPlayer()); //get total balance
+        RenderHelper.renderText(graphics, CurrencyTxt.totalLabel(total), CurrencyTxt.TOTAL, true, this.getX() + TOTAL_OFFSET_X, this.getY() + TOTAL_OFFSET_Y); //render the total balance text
         
         graphics.pose().popPose();
     }
 
+    public boolean isDragArea(double mouseX, double mouseY) { //checks if mouse is inside the draggable area of the purse window
+        int dragAreaStartX = this.getX(); //top left corner of the window
+        int dragAreaStartY = this.getY(); //top left corner of the window
+        int dragAreaEndX = this.getX() + WINDOW_WIDTH; //the entire width of the window
+        int dragAreaEndY = this.getY() + DRAG_AREA_HEIGHT; //only the top pixels defined by DRAG_AREA_HEIGHT are draggable
+        boolean mouseInDragX = mouseX >= dragAreaStartX && mouseX <= dragAreaEndX; //check if the mouse is within the X bounds of the drag area
+        boolean mouseInDragY = mouseY >= dragAreaStartY && mouseY <= dragAreaEndY; //check if the mouse is within the Y bounds of the drag area
+        
+        boolean mouseOverDepositButton = this.depositButton.isMouseOver(mouseX, mouseY); //check if mouse is over deposit button
+        
+        return (mouseInDragX && mouseInDragY) && !mouseOverDepositButton; //return if if mouse inside drag area (but not over deposit button)
+    }
+    
+    private void onDepositAll() {
+        Coined.LOGGER.info("Deposit All clicked"); //TODO: implement deposit all functionality
+    }
+    
+    private void onWithdraw() {
+        //TODO: implement withdraw functionality
+        long withdrawValue = this.withdraw.getValue();
+        Coined.LOGGER.info("Withdraw clicked with amount: " + withdrawValue);
+    }
+    
+    private void onWithdrawCoinChange(CoinType coinType, boolean increment) {
+        Coined.LOGGER.info("Withdraw " + (increment ? "add" : "subtract") + " clicked for " + coinType.name());
+
+        //TODO: adjust withdraw value based on CoinType and increment/decrement also check shift
+
+        if (Screen.hasShiftDown()) {
+
+        }
+
+    }
+
     //======================================== Disabled Methods ========================================\\
     @Override
-    protected void updateWidgetNarration(@Nonnull NarrationElementOutput narrationElementOutput) {} 
+    protected void updateWidgetNarration(@Nonnull NarrationElementOutput narrationElementOutput) {}
+
+    //======================================== Custom Classes ========================================\\
+
+    private static class DepositButton extends CustomButton {
+        private static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/deposit_button.png");
+        private static final int BUTTON_WIDTH = 12;
+        private static final int BUTTON_HEIGHT = 8;
+        
+        public DepositButton(OnPress onPress) {super(BUTTON_TEXTURE, BUTTON_WIDTH, BUTTON_HEIGHT, onPress);}
+        
+        @Override
+        protected void renderTooltip() {
+            setTooltip(Tooltip.create(Txt.trans("purse.button.deposit")));
+        }
+        
+        @Override
+        public void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 301); // Move to a higher Z-level (300 is above most elements)
+            super.renderWidget(graphics, mouseX, mouseY, partialTick); //call the parent render method
+            graphics.pose().popPose();
+        }
+    }
 }
