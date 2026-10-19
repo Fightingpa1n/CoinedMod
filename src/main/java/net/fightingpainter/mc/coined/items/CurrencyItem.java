@@ -36,7 +36,7 @@ public class CurrencyItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(@Nonnull Level world, @Nonnull Player player, @Nonnull InteractionHand hand) {
         if (!world.isClientSide) { //Ensure server-side execution
-            Coined.LOGGER.info("CurrencyItem used");
+            Coined.SERVER_LOGGER.info("CurrencyItem used");
             ItemStack stack = player.getItemInHand(hand);
             long value = getValue(stack);
             BalanceManager.addPlayerBalance(player, value);

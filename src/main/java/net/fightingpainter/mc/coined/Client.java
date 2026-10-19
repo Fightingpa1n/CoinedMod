@@ -43,11 +43,11 @@ public class Client {
             ItemProperties.register(ModItems.GOLD_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Gold Coin
             ItemProperties.register(ModItems.PLATINUM_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Platinum Coin
 
-            Coined.LOGGER.info("Item properties registered successfully.");
+            Coined.CLIENT_LOGGER.info("Item properties registered successfully.");
         });
 
-        Coined.LOGGER.info("WHAAAT!? I'm inside ClientSetup! I'm not sure what you two are talking about! :|");
-        Coined.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        Coined.CLIENT_LOGGER.info("WHAAAT!? I'm inside ClientSetup! I'm not sure what you two are talking about! :|");
+        Coined.CLIENT_LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
     }
 
     //============================== Events ==============================\\

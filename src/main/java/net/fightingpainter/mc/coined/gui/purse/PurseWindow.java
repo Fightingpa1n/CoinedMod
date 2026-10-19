@@ -6,6 +6,7 @@ import net.fightingpainter.mc.coined.Coined;
 import net.fightingpainter.mc.coined.gui.currency.BalanceManager;
 import net.fightingpainter.mc.coined.gui.currency.CoinType;
 import net.fightingpainter.mc.coined.gui.currency.CurrencyTxt;
+import net.fightingpainter.mc.coined.network.packets.PurseWindowRequest;
 import net.fightingpainter.mc.coined.util.RenderHelper;
 import net.fightingpainter.mc.coined.util.Txt;
 import net.fightingpainter.mc.coined.util.widgets.CustomButton;
@@ -18,6 +19,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class PurseWindow extends AbstractWidget {
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/bg.png");
@@ -140,17 +142,16 @@ public class PurseWindow extends AbstractWidget {
     }
     
     private void onDepositAll() {
-        Coined.LOGGER.info("Deposit All clicked"); //TODO: implement deposit all functionality
+        PacketDistributor.sendToServer(new PurseWindowRequest("deposit", 0L));
     }
     
     private void onWithdraw() {
-        //TODO: implement withdraw functionality
         long withdrawValue = this.withdraw.getValue();
-        Coined.LOGGER.info("Withdraw clicked with amount: " + withdrawValue);
+        PacketDistributor.sendToServer(new PurseWindowRequest("withdraw", withdrawValue));
     }
     
     private void onWithdrawCoinChange(CoinType coinType, boolean increment) {
-        Coined.LOGGER.info("Withdraw " + (increment ? "add" : "subtract") + " clicked for " + coinType.name());
+        Coined.CLIENT_LOGGER.info("Withdraw " + (increment ? "add" : "subtract") + " clicked for " + coinType.name());
 
         // Determine the amount to add/subtract based on coin type and shift modifier
         long coinValue = coinType.getValue();

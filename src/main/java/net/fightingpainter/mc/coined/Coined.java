@@ -2,7 +2,7 @@ package net.fightingpainter.mc.coined;
 
 import org.slf4j.Logger;
 
-import com.mojang.logging.LogUtils;
+import org.slf4j.LoggerFactory;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -21,7 +21,10 @@ import net.fightingpainter.mc.coined.network.NetworkHandler;
 public class Coined { //Main Mod Class
     
     public static final String MOD_ID = "coined"; //mod id
-    public static final Logger LOGGER = LogUtils.getLogger(); //logger
+    // Shared setup uses LOGGER; choose a side logger where the logical side is known.
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger CLIENT_LOGGER = LoggerFactory.getLogger(MOD_ID + ".client");
+    public static final Logger SERVER_LOGGER = LoggerFactory.getLogger(MOD_ID + ".server");
     //I'm cool and this is deffenetly not just me trying to hype myself up because I just wanted to continue working on the mod but instead I'be been repairing java stuff for the past 2 hours now and I still can't get the game to run again... a
     
     // Creates a new Block with the id "coined:example_block", combining the namespace and path

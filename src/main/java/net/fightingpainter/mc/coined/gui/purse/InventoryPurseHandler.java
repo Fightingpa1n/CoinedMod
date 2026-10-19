@@ -40,7 +40,7 @@ public class InventoryPurseHandler {
             int buttonX = (inventoryScreen.getGuiLeft()+inventoryScreen.getXSize()) + purseButtonX; //calculate the x position of the button
             int buttonY = inventoryScreen.getGuiTop() + purseButtonY; //calculate the y position of the button
 
-            Coined.LOGGER.debug("Initializing Inventory Purse Handler: Button Position X: " + buttonX + " Y: " + buttonY);
+            Coined.CLIENT_LOGGER.debug("Initializing Inventory Purse Handler: Button Position X: " + buttonX + " Y: " + buttonY);
             button.setPosition(buttonX, buttonY); //set postion of the button
             button.init(event); //init the button
             purse.init(event); //init the purse

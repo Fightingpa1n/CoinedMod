@@ -28,7 +28,7 @@ public class Events {
     @SubscribeEvent
     public static void onServerStarting(ServerStartingEvent event) { //server starting
         // Do something when the server starts
-        Coined.LOGGER.info("Heey! that's cool! I'm inside onServerStarting! it's more spacious here so you can come and join me! :D");
+        Coined.SERVER_LOGGER.info("Heey! that's cool! I'm inside onServerStarting! it's more spacious here so you can come and join me! :D");
     }
 
     @SubscribeEvent
