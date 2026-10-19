@@ -152,12 +152,20 @@ public class PurseWindow extends AbstractWidget {
     private void onWithdrawCoinChange(CoinType coinType, boolean increment) {
         Coined.LOGGER.info("Withdraw " + (increment ? "add" : "subtract") + " clicked for " + coinType.name());
 
-        //TODO: adjust withdraw value based on CoinType and increment/decrement also check shift
-
+        // Determine the amount to add/subtract based on coin type and shift modifier
+        long coinValue = coinType.getValue();
+        long changeAmount = coinValue;
+        
         if (Screen.hasShiftDown()) {
-
+            changeAmount *= 10; // Multiply by 10 if shift is held
         }
-
+        
+        if (!increment) {
+            changeAmount = -changeAmount; // Make negative for subtraction
+        }
+        
+        // Update the withdraw field value
+        this.withdraw.editFieldValue(changeAmount);
     }
 
     //======================================== Disabled Methods ========================================\\

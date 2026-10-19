@@ -144,8 +144,13 @@ public class CoinAmount extends AbstractWidget {
         @Override
         protected void renderTooltip() {
             setTooltipDelay(Duration.ofSeconds(1));
-            if (Screen.hasShiftDown()) { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.add_ten"), Txt.TOOLTIP)));}
-            else { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.add_one"), Txt.TOOLTIP)));}
+            long coinValue = coinType.getValue();
+            if (Screen.hasShiftDown()) {
+                long totalValue = coinValue * 10;
+                setTooltip(Tooltip.create(Txt.colored("Add " + CurrencyTxt.formatValue(totalValue), Txt.TOOLTIP)));
+            } else {
+                setTooltip(Tooltip.create(Txt.colored("Add " + CurrencyTxt.formatValue(coinValue), Txt.TOOLTIP)));
+            }
         }
     }
 
@@ -167,8 +172,13 @@ public class CoinAmount extends AbstractWidget {
         @Override
         public void renderTooltip() {
             setTooltipDelay(Duration.ofSeconds(1));
-            if (Screen.hasShiftDown()) { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.subtract_ten"), Txt.TOOLTIP)));}
-            else { setTooltip(Tooltip.create(Txt.colored(Txt.trans("purse.button.subtract_one"), Txt.TOOLTIP)));}
+            long coinValue = coinType.getValue();
+            if (Screen.hasShiftDown()) {
+                long totalValue = coinValue * 10;
+                setTooltip(Tooltip.create(Txt.colored("Subtract " + CurrencyTxt.formatValue(totalValue), Txt.TOOLTIP)));
+            } else {
+                setTooltip(Tooltip.create(Txt.colored("Subtract " + CurrencyTxt.formatValue(coinValue), Txt.TOOLTIP)));
+            }
         }
     }
 }
