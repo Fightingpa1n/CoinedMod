@@ -40,6 +40,7 @@ public final class BalanceManager {
      * @param newBalance The new balance to set for the player
      */
     public static void setPlayerBalance(Player player, long newBalance) {
+        newBalance = Math.max(0, newBalance);
         player.setData(ModDataTypes.PLAYER_BALANCE.get(), newBalance);
         SyncHelper.broadcast(player, newBalance);
     }
@@ -60,6 +61,7 @@ public final class BalanceManager {
      * @param amount The amount to add to the player's balance
      */
     public static void addPlayerBalance(Player player, long amount) {
+        if (amount < 0 || amount > Long.MAX_VALUE - getPlayerBalance(player)) throw new IllegalArgumentException("Balance overflow or negative deposit");
         long newBalance = getPlayerBalance(player) + amount;
         setPlayerBalance(player, newBalance);
     }
@@ -80,6 +82,7 @@ public final class BalanceManager {
      * @param amount The amount to subtract from the player's balance
      */
     public static void subtractPlayerBalance(Player player, long amount) {
+        if (amount < 0) throw new IllegalArgumentException("Negative withdrawal");
         long newBalance = Math.max(0, getPlayerBalance(player) - amount); //prevent negative balance
         setPlayerBalance(player, newBalance);
     }
@@ -101,7 +104,7 @@ public final class BalanceManager {
      * @return True if the player has enough balance, false otherwise
      */
     public static boolean hasEnough(Player player, long amount) {
-        return getPlayerBalance(player) >= amount;
+        return amount >= 0 && getPlayerBalance(player) >= amount;
     }
     
     /**

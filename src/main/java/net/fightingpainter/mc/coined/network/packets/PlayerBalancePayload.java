@@ -7,11 +7,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public record PlayerBalancePayload(long ballance) implements CustomPacketPayload {
+public record PlayerBalancePayload(long ballance, boolean autoDeposit) implements CustomPacketPayload {
     public static final Type<PlayerBalancePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "player_balance"));
 
     public static final StreamCodec<ByteBuf, PlayerBalancePayload> CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_LONG, PlayerBalancePayload::ballance,
+            ByteBufCodecs.BOOL, PlayerBalancePayload::autoDeposit,
             PlayerBalancePayload::new);
 
     @Override

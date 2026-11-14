@@ -255,7 +255,7 @@ public class Money {
     public static Money fromValue(long totalValue) {
         Money money = new Money(); //init empty money object
         if (totalValue > 0) {
-            money.setPlatinumAmount((int) (totalValue / CoinType.PLATINUM.getValue())); //get max possible platinum coins
+            money.setPlatinumAmount((int) Math.min(Integer.MAX_VALUE, totalValue / CoinType.PLATINUM.getValue())); //get max possible platinum coins
             totalValue %= CoinType.PLATINUM.getValue(); //get the remainder
             money.setGoldAmount((int) (totalValue / CoinType.GOLD.getValue())); //get max possible gold coins
             totalValue %= CoinType.GOLD.getValue(); //get the remainder

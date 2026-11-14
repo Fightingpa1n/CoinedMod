@@ -26,10 +26,10 @@ public class ModDataTypes {
     //==================== Data Component Types ====================\\
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Money>> MONEY = registerDataComponentType("money", builder -> builder.persistent(
         RecordCodecBuilder.create(instance -> instance.group( //the codec for the Money Class
-            Codec.INT.fieldOf("Copper").forGetter(Money::getCopperAmount),
-            Codec.INT.fieldOf("Silver").forGetter(Money::getSilverAmount),
-            Codec.INT.fieldOf("Gold").forGetter(Money::getGoldAmount),
-            Codec.INT.fieldOf("Platinum").forGetter(Money::getPlatinumAmount)
+            Codec.intRange(0, Integer.MAX_VALUE).fieldOf("Copper").forGetter(Money::getCopperAmount),
+            Codec.intRange(0, Integer.MAX_VALUE).fieldOf("Silver").forGetter(Money::getSilverAmount),
+            Codec.intRange(0, Integer.MAX_VALUE).fieldOf("Gold").forGetter(Money::getGoldAmount),
+            Codec.intRange(0, Integer.MAX_VALUE).fieldOf("Platinum").forGetter(Money::getPlatinumAmount)
         ).apply(instance, Money::new))));
 
     //=================== Attachment Types ====================\\
@@ -38,6 +38,9 @@ public class ModDataTypes {
             b -> b.serialize(Codec.LONG)
             .copyOnDeath()
         );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> AUTO_DEPOSIT = registerAttachmentType(
+        "auto_deposit", () -> false, b -> b.serialize(Codec.BOOL).copyOnDeath());
 
     //======================================== Register Methods ========================================\\
     //==================== Data Component Types ====================\\

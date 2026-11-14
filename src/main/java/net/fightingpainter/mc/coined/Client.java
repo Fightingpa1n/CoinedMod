@@ -43,6 +43,13 @@ public class Client {
             ItemProperties.register(ModItems.GOLD_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Gold Coin
             ItemProperties.register(ModItems.PLATINUM_COIN.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "coins"), (stack, world, entity, seed) -> stack.getCount() / maxStack); //Platinum Coin
 
+            ItemProperties.register(ModItems.MONEY_BAG.get(), ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "type"), (stack, world, entity, seed) -> {
+                var money = net.fightingpainter.mc.coined.items.CurrencyItem.getMoneyData(stack);
+                if (money.hasPlatinum()) return 0.4F;
+                if (money.hasGold()) return 0.3F;
+                if (money.hasSilver()) return 0.2F;
+                return money.hasCopper() ? 0.1F : 0F;
+            });
             Coined.CLIENT_LOGGER.info("Item properties registered successfully.");
         });
 

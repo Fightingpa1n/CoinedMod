@@ -105,12 +105,9 @@ public class MoneyBagItem extends CurrencyItem {
     public static ItemStack addBagToBag(ItemStack bagItem, ItemStack moneybagItem) {
         Money money = getMoneyData(bagItem); //get the money data from the bag item
         Money otherMoney = getMoneyData(moneybagItem); //get the money data from the other money bag
-        int rest = 0; //initialize restw
-        for (CoinType coinType : CoinType.values()) { //for each coin type
-            rest += restAddCoin(money, coinType, coinType.getAmount(otherMoney)); //add the coins to the money bag and get the rest
-        } setMoneyData(bagItem, money); //set the money data to the money bag
-        if (rest > 0) {moneybagItem = createMoneyBag(restCombineMoney(money, otherMoney));} //if there is a rest, create a new money bag with the rest
-        else {moneybagItem = ItemStack.EMPTY;} //if there is no rest, set the money bag to empty
+        Money rest = restCombineMoney(money, otherMoney);
+        setMoneyData(bagItem, money);
+        moneybagItem = rest.isEmpty() ? ItemStack.EMPTY : createMoneyBag(rest);
         return moneybagItem; //return the money bag itemstack
     }
     
@@ -137,12 +134,9 @@ public class MoneyBagItem extends CurrencyItem {
      * @return the amount of coins that couldn't be added to the Money object (rest)
     */
     private static int restAddCoin(Money money, CoinType coinType, int amount) {
-        int total = coinType.getAmount(money) + amount; //total coin count
-        int rest = total - coinType.getMaxBagAmount(); //calculate rest
-        if (rest > 0) {coinType.setAmountInMoney(money, coinType.getMaxBagAmount());}
-        else {
-            coinType.setAmountInMoney(money, total); //set amount to total
-            rest = 0; //no rest
-        } return rest; //return the rest
+        int available = Math.max(0, coinType.getMaxBagAmount() - coinType.getAmount(money));
+        int accepted = Math.min(available, Math.max(0, amount));
+        coinType.setAmountInMoney(money, coinType.getAmount(money) + accepted);
+        return amount - accepted;
     }
 }

@@ -58,10 +58,13 @@ public class PurseWindow extends AbstractWidget {
     private static final int PLATINUM_AMOUNT_OFFSET_X = 5;
     private static final int PLATINUM_AMOUNT_OFFSET_Y = 91;
     private final CoinAmount platinumAmount = new CoinAmount(CoinType.PLATINUM, this::onWithdrawCoinChange);
-    private long withdrawAmount = 0L;
+    private final Button autoDepositButton = new AutoPickupButton(button -> {
+        boolean enabled = BalanceManager.getCurrentPlayer().getData(net.fightingpainter.mc.coined.data.ModDataTypes.AUTO_DEPOSIT);
+        PacketDistributor.sendToServer(new PurseWindowRequest("auto_deposit", enabled ? 0 : 1));
+    });
     
     public PurseWindow() {
-        super(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, CommonComponents.EMPTY);
+        super(0, 0, WINDOW_WIDTH, 154, CommonComponents.EMPTY);
         this.active = false;
         this.togglePurse(false); //start closed
     }
@@ -70,6 +73,7 @@ public class PurseWindow extends AbstractWidget {
         event.addListener(this); //register purse window listener
 
         event.addListener(this.depositButton);
+        event.addListener(this.autoDepositButton);
 
         this.withdraw.init(event);
 
@@ -83,6 +87,8 @@ public class PurseWindow extends AbstractWidget {
 
     public void togglePurse(boolean open) {
         this.visible = open;
+        this.autoDepositButton.visible = open;
+        this.autoDepositButton.active = open;
 
         this.depositButton.visible = open;
         this.depositButton.active = open;
@@ -100,6 +106,7 @@ public class PurseWindow extends AbstractWidget {
     public void setPosition(int x, int y) {
         super.setPosition(x, y); //set the position of the widget
         
+        autoDepositButton.setPosition(x + 5, y + 132);
         depositButton.setPosition(this.getX() + DEPOSIT_BUTTON_OFFSET_X, this.getY() + DEPOSIT_BUTTON_OFFSET_Y);
 
         withdraw.setPosition(this.getX() + WITHDRAW_OFFSET_X, this.getY() + WITHDRAW_OFFSET_Y);
@@ -125,6 +132,10 @@ public class PurseWindow extends AbstractWidget {
         long total = BalanceManager.getPlayerBalance(BalanceManager.getCurrentPlayer()); //get total balance
         RenderHelper.renderText(graphics, CurrencyTxt.totalLabel(total), CurrencyTxt.TOTAL, true, this.getX() + TOTAL_OFFSET_X, this.getY() + TOTAL_OFFSET_Y); //render the total balance text
         
+        graphics.fill(getX(), getY() + 130, getX() + 90, getY() + 154, 0xff373737);
+        boolean auto = BalanceManager.getCurrentPlayer().getData(net.fightingpainter.mc.coined.data.ModDataTypes.AUTO_DEPOSIT);
+        autoDepositButton.setMessage(net.minecraft.network.chat.Component.translatable(auto ? "gui.coined.auto_on" : "gui.coined.auto_off"));
+        autoDepositButton.setTooltip(Tooltip.create(net.minecraft.network.chat.Component.translatable("gui.coined.auto_tooltip")));
         graphics.pose().popPose();
     }
 
@@ -147,7 +158,7 @@ public class PurseWindow extends AbstractWidget {
     
     private void onWithdraw() {
         long withdrawValue = this.withdraw.getValue();
-        PacketDistributor.sendToServer(new PurseWindowRequest("withdraw", withdrawValue));
+        PacketDistributor.sendToServer(new PurseWindowRequest(Screen.hasShiftDown() ? "withdraw_coins" : "withdraw", withdrawValue));
     }
     
     private void onWithdrawCoinChange(CoinType coinType, boolean increment) {
@@ -174,6 +185,19 @@ public class PurseWindow extends AbstractWidget {
     protected void updateWidgetNarration(@Nonnull NarrationElementOutput narrationElementOutput) {}
 
     //======================================== Custom Classes ========================================\\
+
+    private static class AutoPickupButton extends Button {
+        AutoPickupButton(OnPress onPress) {
+            super(0, 0, 80, 18, net.minecraft.network.chat.Component.empty(), onPress, DEFAULT_NARRATION);
+        }
+        @Override
+        public void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 301);
+            super.renderWidget(graphics, mouseX, mouseY, partialTick);
+            graphics.pose().popPose();
+        }
+    }
 
     private static class DepositButton extends CustomButton {
         private static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(Coined.MOD_ID, "textures/gui/purse/deposit_button.png");

@@ -17,7 +17,7 @@ public class SoundHelper { //TODO: add comments to all methods
     //============================== Sound Playing ==============================\\
     //=========== Start Sound Instance ===========\\
     public static SoundInstance playSound(SoundEvent sound, float volume, float pitch) {
-        SoundInstance instance = SimpleSoundInstance.forUI(sound, volume, pitch);
+        SoundInstance instance = SimpleSoundInstance.forUI(sound, pitch, volume);
         getSoundManager().play(instance);
         return instance;
     }

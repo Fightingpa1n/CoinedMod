@@ -12,7 +12,7 @@ public final class SyncHelper {
     public static void sync(ServerPlayer target, Player source) {
         long v = source.getData(ModDataTypes.PLAYER_BALANCE);
         if (target == source) {
-            PacketDistributor.sendToPlayer(target, new PlayerBalancePayload(v));
+            PacketDistributor.sendToPlayer(target, new PlayerBalancePayload(v, source.getData(ModDataTypes.AUTO_DEPOSIT)));
         } else {
             PacketDistributor.sendToPlayer(target, new PlayerLongPayload(source.getId(), v));
         }
@@ -21,7 +21,7 @@ public final class SyncHelper {
     /** Broadcast a new value after a server-side change. */
     public static void broadcast(Player source, long newValue) {
         if (!(source instanceof ServerPlayer serverPlayer)) return;
-        PacketDistributor.sendToPlayer(serverPlayer, new PlayerBalancePayload(newValue));
+        PacketDistributor.sendToPlayer(serverPlayer, new PlayerBalancePayload(newValue, source.getData(ModDataTypes.AUTO_DEPOSIT)));
         PacketDistributor.sendToPlayersTrackingEntity(source, new PlayerLongPayload(source.getId(), newValue));
     }
 }

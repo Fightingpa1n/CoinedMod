@@ -35,24 +35,17 @@ public class CurrencyItem extends Item {
     //======================================== Item Behavior ========================================\\
     @Override
     public InteractionResultHolder<ItemStack> use(@Nonnull Level world, @Nonnull Player player, @Nonnull InteractionHand hand) {
-        if (!world.isClientSide) { //Ensure server-side execution
-            Coined.SERVER_LOGGER.info("CurrencyItem used");
-            ItemStack stack = player.getItemInHand(hand);
-            long value = getValue(stack);
-            BalanceManager.addPlayerBalance(player, value);
-            player.displayClientMessage(Txt.concat(CurrencyTxt.valueLabel(value, CurrencyTxt.TOTAL), " ", Txt.colored(Txt.trans("added_to_purse"), Txt.GREEN)), true); //Display a message to the player with the value added to their purse
-            if (!player.isCreative()) {
-                player.setItemInHand(hand, ItemStack.EMPTY); //Remove the item
-            }
-
-            return InteractionResultHolder.success(player.getItemInHand(hand));
+        ItemStack stack = player.getItemInHand(hand);
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            if (!net.fightingpainter.mc.coined.util.CurrencyTransactions.deposit(serverPlayer, stack)) return InteractionResultHolder.fail(stack);
         }
-        return InteractionResultHolder.pass(player.getItemInHand(hand));
+        return InteractionResultHolder.sidedSuccess(stack, world.isClientSide);
     }
 
     //==================== Inventory ====================\\
     @Override
     public boolean overrideOtherStackedOnMe(@Nonnull ItemStack stack, @Nonnull ItemStack other, @Nonnull Slot slot, @Nonnull ClickAction action, @Nonnull Player player, @Nonnull SlotAccess access) {
+        if (!slot.allowModification(player)) return false;
         if (other.getItem() instanceof CurrencyItem otherItem) {
             Money money = getMoney(stack); //get the money from the current item
             if (action.equals(ClickAction.SECONDARY)) {
@@ -61,6 +54,7 @@ public class CurrencyItem extends Item {
                     Money restMoney = restCombineMoney(money, otherMoney); //combine the money and the other money
                     access.set(createCurrencyItem(money)); //set the current item to the combined money item
                     slot.set(createCurrencyItem(restMoney)); //set the slot to the rest money item
+                    return true;
                 } else if (otherItem instanceof CoinItem) { //on right click with coin, only move 1
                     CoinType coinType = ((CoinItem) otherItem).getCoinType(); //get the coin type from the other item
                     int totalAmount = coinType.getAmount(money) + 1; //get the total amount of coins in the money object
@@ -99,6 +93,7 @@ public class CurrencyItem extends Item {
     @Override
     public boolean overrideStackedOnOther(@Nonnull ItemStack stack, @Nonnull Slot slot, @Nonnull ClickAction action, @Nonnull Player player) {
         //if MoneyBagItem on Empty slot right click,
+        if (!slot.allowModification(player)) return false;
         if (stack.getItem() instanceof MoneyBagItem stackItem) {
             if (action.equals(ClickAction.SECONDARY) && !slot.hasItem()) {
                 Money money = stackItem.getMoney(stack); //get the money from the current item
@@ -188,13 +183,10 @@ public class CurrencyItem extends Item {
      * @return the amount of coins that couldn't be added to the Money object (rest)
     */
     private static int restAddCoin(Money money, CoinType coinType, int amount) {
-        int total = coinType.getAmount(money) + amount; //total coin count
-        int rest = total - coinType.getMaxBagAmount(); //calculate rest
-        if (rest > 0) {coinType.setAmountInMoney(money, coinType.getMaxBagAmount());}
-        else {
-            coinType.setAmountInMoney(money, total); //set amount to total
-            rest = 0; //no rest
-        } return rest; //return the rest
+        int available = Math.max(0, coinType.getMaxBagAmount() - coinType.getAmount(money));
+        int accepted = Math.min(available, Math.max(0, amount));
+        coinType.setAmountInMoney(money, coinType.getAmount(money) + accepted);
+        return amount - accepted;
     }
 
 
@@ -206,7 +198,8 @@ public class CurrencyItem extends Item {
      * @return the Money Data from the ItemStack or null if no data is present
     */
     public static Money getMoneyData(ItemStack stack) {
-        return stack.get(COMPONENT); //get the money data from the itemstack
+        Money money = stack.get(COMPONENT);
+        return money == null ? new Money() : new Money(money.getCopperAmount(), money.getSilverAmount(), money.getGoldAmount(), money.getPlatinumAmount());
     }
 
     /**
@@ -229,7 +222,7 @@ public class CurrencyItem extends Item {
      * @param money the Money Data to set 
     */
     public static void setMoneyData(ItemStack stack, Money money) {
-        stack.set(COMPONENT, money); //set the money data to the itemstack
+        stack.set(COMPONENT, new Money(money.getCopperAmount(), money.getSilverAmount(), money.getGoldAmount(), money.getPlatinumAmount())); //set the money data to the itemstack
     }
 
 

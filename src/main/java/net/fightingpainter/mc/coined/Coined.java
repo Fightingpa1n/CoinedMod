@@ -53,6 +53,7 @@ public class Coined { //Main Mod Class
         modEventBus.addListener(this::commonSetup); //common setup
 
         //Register stuff
+        CurrencyEvents.init();
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModMenus.register(modEventBus);

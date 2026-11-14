@@ -88,8 +88,9 @@ public class CoinAmount extends AbstractWidget {
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 301); //Move to a higher Z-level (300 is above most elements)
 
-        Money playerMoney = BalanceManager.getPlayerMoney(BalanceManager.getCurrentPlayer());
-        int coinAmount = this.coinType.getAmount(playerMoney);
+        long balance = BalanceManager.getPlayerBalance(BalanceManager.getCurrentPlayer());
+        long coinAmount = balance / this.coinType.getValue();
+        if (this.coinType != CoinType.PLATINUM) coinAmount %= 100;
         RenderHelper.renderText(graphics, String.valueOf(coinAmount), RenderHelper.getFont(), coinType.getNameColor(), true, this.getX() + COIN_AMOUNT_TEXT_OFFSET_X, this.getY() + COIN_AMOUNT_TEXT_OFFSET_Y);
 
         graphics.pose().popPose();

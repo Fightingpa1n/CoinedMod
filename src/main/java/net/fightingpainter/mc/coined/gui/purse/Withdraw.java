@@ -85,7 +85,7 @@ public class Withdraw extends AbstractWidget {
 
     public void editFieldValue(long amount) {
         long currentValue = this.getValue();
-        this.withdrawField.setValue(Long.toString(currentValue + amount));
+        this.withdrawField.setValue(Long.toString(amount > 0 && currentValue > Long.MAX_VALUE - amount ? Long.MAX_VALUE : Math.max(0, currentValue + amount)));
     }
 
     private static class WithdrawField extends EditBox {
@@ -96,8 +96,8 @@ public class Withdraw extends AbstractWidget {
             this.setHint(Txt.colored("Amount", Txt.TOOLTIP2));
 
             //Limit & numeric-only filter
-            this.setMaxLength(18);
-            this.setFilter(s -> s.matches("\\d*"));
+            this.setMaxLength(19);
+            this.setFilter(s -> s.matches("\\d*") && (s.isEmpty() || (s.length() < 19 || s.compareTo(Long.toString(Long.MAX_VALUE)) <= 0)));
             
             //Initial value (optional)
             this.setValue("");
@@ -176,6 +176,7 @@ public class Withdraw extends AbstractWidget {
         public void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             graphics.pose().pushPose();
             graphics.pose().translate(0, 0, 301); // Move to a higher Z-level (300 is above most elements)
+            this.active = parent.visible && parent.getValue() > 0 && parent.getValue() <= net.fightingpainter.mc.coined.gui.currency.BalanceManager.getPlayerBalance(net.fightingpainter.mc.coined.gui.currency.BalanceManager.getCurrentPlayer());
             super.renderWidget(graphics, mouseX, mouseY, partialTick); //call the parent render method
             graphics.pose().popPose();
         }

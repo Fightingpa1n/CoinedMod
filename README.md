@@ -1,25 +1,38 @@
+# Coined
 
-Installation information
-=======
+Currency and purse mod for Minecraft 1.21.1 / NeoForge 21.1.214. Shop blocks remain unfinished.
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## Using the purse
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+Open your survival inventory and click the purse button. Deposit All deposits loose currency and filled money bags from your inventory, hotbar, and offhand. Right-clicking currency also deposits it, consuming it in creative mode too.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+Enter a value in copper units and withdraw to receive money bags. Hold Shift while clicking Withdraw for loose coins, using the highest denominations first. Bags hold up to 255 of each denomination; excess currency splits into more bags. Items that do not fit drop at your feet. A transaction may create at most 4096 stacks; larger requests are rejected without debiting the balance.
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+Each silver is 100 copper; gold is 10,000 copper; platinum is 1,000,000 copper. The +/- buttons adjust the selected amount; Shift adjusts ten coins at once. Invalid withdrawals are disabled. Hover Withdraw for guidance.
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+The Auto-pickup switch deposits collected currency directly, even with a full inventory. It defaults to OFF and persists through logout and death. Pickup delays and item ownership still apply.
+
+## Death
+
+Balances persist through death and are synchronized on respawn and dimension changes.
+
+`/gamerule BalanceDropPercentage 25` drops 25% of a player's purse as money bags on death. Default: 0. Values clamp to 0–100. Fractional copper rounds down; the remainder stays in the purse. This rule applies independently of keepInventory. Extreme command-created balances use larger bags to avoid spawning millions of entities.
+
+## Mob currency
+
+Entity-type tags `coined:common`, `coined:uncommon`, `coined:miniboss`, and `coined:boss` supply default vanilla mob groups and can be extended in datapacks under `data/<namespace>/tags/entity_type/`. Individual mobs can also be assigned a tier with `/tag <entity> add coined:boss` (plain `boss`, etc. also works).
+
+| Tier | Drop range, copper value |
+| --- | --- |
+| common | 1–50 |
+| uncommon | 100–500 |
+| miniboss | 1,000–5,000 |
+| boss | 10,000–50,000 |
+
+Ranges are inclusive. Only the highest matching tier drops currency. Drops respect doMobLoot; untagged mobs drop no currency. All tagged mob deaths qualify, including environmental deaths.
+
+## Development
+
+Java 21 is required by the toolchain. Build: `./gradlew build`. Run the dedicated headless currency tests: `./gradlew runGameTestServer`.
+
+Tests cover denomination splitting, capacity boundaries, bag merging, component-copy safety, extreme values, inventory/offhand deposits, withdrawals, full-inventory auto-pickup, and death-drop rounding. Client visuals and actual respawn/reconnect flows still need an in-game playtest.

@@ -6,9 +6,18 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public final class ClientPayloadHandler {
     private ClientPayloadHandler() {}
+    public static void handleTrackedBalance(net.fightingpainter.mc.coined.network.packets.PlayerLongPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            var entity = ctx.player().level().getEntity(payload.entityId());
+            if (entity instanceof net.minecraft.world.entity.player.Player player) player.setData(ModDataTypes.PLAYER_BALANCE, payload.value());
+        });
+    }
 
     public static void handlePlayerBalance(PlayerBalancePayload payload, IPayloadContext ctx) {
         // Update the client attachment directly so receiving a sync never sends another packet.
-        ctx.enqueueWork(() -> ctx.player().setData(ModDataTypes.PLAYER_BALANCE, payload.ballance()));
+        ctx.enqueueWork(() -> {
+            ctx.player().setData(ModDataTypes.PLAYER_BALANCE, payload.ballance());
+            ctx.player().setData(ModDataTypes.AUTO_DEPOSIT, payload.autoDeposit());
+        });
     }
 }
